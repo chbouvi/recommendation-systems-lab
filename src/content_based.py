@@ -1,5 +1,9 @@
 import pandas as pd
 
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", 120)
+pd.set_option("display.max_colwidth", None)
+
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 
 def recommend_similar_movies(movie_title, top_n=10):
@@ -24,6 +28,16 @@ def recommend_similar_movies(movie_title, top_n=10):
         similarity_results["title"] != df_movies.loc[movie_index, "title"]
     ]
 
+    selected_genres = df_movies.loc[movie_index, "genres"]
+    selected_genres = set(selected_genres.split("|"))
+
+    def get_shared_genres(recommended_genres):
+        recommended_genres = set(recommended_genres.split("|"))
+        shared_genres = selected_genres.intersection(recommended_genres)
+        return ", ".join(sorted(shared_genres))
+    
+    similarity_results["shared_genres"] = similarity_results["genres"].apply(get_shared_genres)
+
     similarity_results = similarity_results.sort_values(
         by=["similarity_score", "title"],
         ascending=[False, True]
@@ -32,13 +46,16 @@ def recommend_similar_movies(movie_title, top_n=10):
     return similarity_results.head(top_n)
 
 print("Recommendations for Toy Story (1995)")
-print(recommend_similar_movies("Toy Story (1995)"))
+recommendations = recommend_similar_movies("Toy Story (1995)")
+print(recommendations[["title", "similarity_score", "shared_genres"]])
 print()
 
 print("Recommendations for Matrix, The (1999)")
-print(recommend_similar_movies("Matrix, The (1999)"))
+recommendations = recommend_similar_movies("Matrix, The (1999)")
+print(recommendations[["title", "similarity_score", "shared_genres"]])
 print()
 
 print("Recommendations for Jurassic Park (1993)")
-print(recommend_similar_movies("Jurassic Park (1993)"))
+recommendations = recommend_similar_movies("Jurassic Park (1993)")
+print(recommendations[["title", "similarity_score", "shared_genres"]])
 print()
