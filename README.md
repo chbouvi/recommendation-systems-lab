@@ -12,6 +12,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Built a genre-based content recommender
 - Added shared-genre explanations for recommendations
 - Added rating count and average rating as tie-breakers for ranked recommendations
+- Built an initial collaborative filtering baseline using highly rated movies from similar users
 
 ## How It Works
 
@@ -29,7 +30,7 @@ MovieLens is a public movie ratings dataset commonly used for recommendation sys
 
 ## Planned Features
 
-- Build a collaborative filtering recommender using user ratings
+- Improve collaborative filtering recommendation ranking
 - Compare recommendation methods (content-based filtering vs. collaborative filtering)
 - Evaluate recommendation quality with metrics
 - Build a simple Streamlit dashboard
