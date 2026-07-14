@@ -1,5 +1,9 @@
 import pandas as pd
 
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", 120)
+pd.set_option("display.max_colwidth", None)
+
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 
@@ -28,13 +32,18 @@ similar_user_ratings = df_ratings[
     (df_ratings["movieId"] != movie_id)
 ]
 
-print(users)
-print(f"Number of users who liked Toy Story: {len(users)}")
-
-print(similar_user_ratings.head())
-print(len(similar_user_ratings))
-
 top_movie_ids = similar_user_ratings["movieId"].value_counts().head(10)
-print(top_movie_ids)
+top_movies = top_movie_ids.reset_index()
+top_movies.columns = ["movieId", "similar_user_likes"]
+top_movies = top_movies.merge(
+    df_movies[["movieId", "title", "genres"]],
+    on="movieId",
+    how="left"
+)
+
+print("Collaborative recommendations for Toy Story (1995)")
+print(f"Number of users who liked Toy Story: {len(users)}")
+print()
+print(top_movies[["title", "similar_user_likes", "genres"]])
 
 
