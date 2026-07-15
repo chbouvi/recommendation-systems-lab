@@ -34,10 +34,22 @@ def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
         (df_ratings["movieId"] != movie_id)
     ]
 
-    top_movie_ids = similar_user_ratings["movieId"].value_counts().head(top_n)
-    top_movies = top_movie_ids.reset_index()
-    top_movies.columns = ["movieId", "similar_user_likes"]
-    top_movies = top_movies.merge(
+    movie_stats = (
+        similar_user_ratings.groupby("movieId")["rating"]
+        .agg(["count", "mean"])
+        .reset_index()
+    )
+
+    movie_stats.columns = ["movieId", "similar_user_likes", "average_similar_user_rating"]
+
+    movie_stats = movie_stats.sort_values(
+        by=["similar_user_likes", "average_similar_user_rating"],
+        ascending=[False, False]
+    )
+
+    top_movie_stats = movie_stats.head(top_n)
+
+    top_movies = top_movie_stats.merge(
         df_movies[["movieId", "title", "genres"]],
         on="movieId",
         how="left"
@@ -53,7 +65,7 @@ else:
     print("Collaborative recommendations for Toy Story (1995)")
     print(f"Number of users who liked Toy Story: {user_amount}")
     print()
-    print(top_movies[["title", "similar_user_likes", "genres"]])
+    print(top_movies[["title", "similar_user_likes", "average_similar_user_rating", "genres"]])
 
 
 
