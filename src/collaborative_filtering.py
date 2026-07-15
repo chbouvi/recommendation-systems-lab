@@ -11,8 +11,7 @@ def find_users_who_like_movie(movie_title, min_rating):
     movie_row = df_movies[df_movies["title"] == movie_title]
 
     if movie_row.empty:
-        print("Movie not found.")
-        return
+        return None, None
     
     movie_id = movie_row["movieId"].iloc[0]
 
@@ -23,27 +22,38 @@ def find_users_who_like_movie(movie_title, min_rating):
 
     return liked_ratings["userId"].unique(), movie_id
 
-min_rating = 4.0
-users, movie_id = find_users_who_like_movie("Toy Story (1995)", min_rating)
+def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
+    users, movie_id = find_users_who_like_movie(movie_title, min_rating)
 
-similar_user_ratings = df_ratings[
-    (df_ratings["userId"].isin(users)) &
-    (df_ratings["rating"] >= min_rating) & 
-    (df_ratings["movieId"] != movie_id)
-]
+    if users is None:
+        return None, None
 
-top_movie_ids = similar_user_ratings["movieId"].value_counts().head(10)
-top_movies = top_movie_ids.reset_index()
-top_movies.columns = ["movieId", "similar_user_likes"]
-top_movies = top_movies.merge(
-    df_movies[["movieId", "title", "genres"]],
-    on="movieId",
-    how="left"
-)
+    similar_user_ratings = df_ratings[
+        (df_ratings["userId"].isin(users)) &
+        (df_ratings["rating"] >= min_rating) & 
+        (df_ratings["movieId"] != movie_id)
+    ]
 
-print("Collaborative recommendations for Toy Story (1995)")
-print(f"Number of users who liked Toy Story: {len(users)}")
-print()
-print(top_movies[["title", "similar_user_likes", "genres"]])
+    top_movie_ids = similar_user_ratings["movieId"].value_counts().head(top_n)
+    top_movies = top_movie_ids.reset_index()
+    top_movies.columns = ["movieId", "similar_user_likes"]
+    top_movies = top_movies.merge(
+        df_movies[["movieId", "title", "genres"]],
+        on="movieId",
+        how="left"
+    )
+
+    return top_movies, len(users)
+
+top_movies, user_amount = recommend_from_similar_users("Toy Story (1995)")
+
+if top_movies is None:
+    print("Movie not found.")
+else:
+    print("Collaborative recommendations for Toy Story (1995)")
+    print(f"Number of users who liked Toy Story: {user_amount}")
+    print()
+    print(top_movies[["title", "similar_user_likes", "genres"]])
+
 
 
