@@ -17,13 +17,15 @@ A recommendation lab that explains why items are recommended, compares content-b
 
 ## How It Works
 
-The current recommender is content-based. It looks at each movie's genres and compares movies based on how many genres they have in common.
+The project currently includes two recommendation approaches. 
 
-For example, if two movies both include `Adventure`, `Animation`, and `Comedy`, they get a higher similarity score than movies with fewer overlapping genres.
+The content-based recommender looks at each movie's genres and compares movies based on how many genres they have in common. For example, if two movies both include `Adventure`, `Animation`, and `Comedy`, they get a higher similarity score than movies with fewer overlapping genres. If multiple movies have the same similarity score, the recommender uses rating count and average rating to help decide the order.
 
-If multiple movies have the same similarity score, the recommender uses rating count and average rating to decide the order. Genre similarity is still the main signal, but ratings help break ties.
+The collaborative filtering recommender uses user behavior instead of the movie genres. It finds users who rated a selected movie highly, then recommends other movies those users also rated highly. It also tracks how many similar users liked each movie and their average rating for that movie.
 
-The output also shows the shared genres so the recommendations are easier to understand.
+For `Toy Story (1995)`, the content-based recommender returns movies like `Shrek`, `Toy Story 2`, and `Monsters, Inc.`, while the collaborative filtering recommender returns movies like `The Shawshank Redemption`, `Forrest Gump`, and `Star Wars: Episode IV - A New Hope`.
+
+This illustrates the difference between recommending based on features and recommending based on user behavior.
 
 ## MovieLens
 
