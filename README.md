@@ -13,6 +13,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added shared-genre explanations for recommendations
 - Added rating count and average rating as tie-breakers for ranked recommendations
 - Built an initial collaborative filtering baseline using highly rated movies from similar users
+- Added average similar-user rating to collaborative recommendations
 
 ## How It Works
 
