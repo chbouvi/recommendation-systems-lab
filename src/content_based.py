@@ -60,35 +60,36 @@ def recommend_similar_movies(movie_title, top_n=10):
 
     return similarity_results.head(top_n)
 
-print("Recommendations for Toy Story (1995)")
-recommendations = recommend_similar_movies("Toy Story (1995)")
-print(recommendations[[
-    "title",
-    "similarity_score",
-    "average_rating",
-    "rating_count",
-    "shared_genres"
-]])
-print()
+if __name__ == "__main__":
+    print("Recommendations for Toy Story (1995)")
+    recommendations = recommend_similar_movies("Toy Story (1995)")
+    print(recommendations[[
+        "title",
+        "similarity_score",
+        "average_rating",
+        "rating_count",
+        "shared_genres"
+    ]])
+    print()
 
-print("Recommendations for Matrix, The (1999)")
-recommendations = recommend_similar_movies("Matrix, The (1999)")
-print(recommendations[[
-    "title",
-    "similarity_score",
-    "average_rating",
-    "rating_count",
-    "shared_genres"
-]])
-print()
+    print("Recommendations for Matrix, The (1999)")
+    recommendations = recommend_similar_movies("Matrix, The (1999)")
+    print(recommendations[[
+        "title",
+        "similarity_score",
+        "average_rating",
+        "rating_count",
+        "shared_genres"
+    ]])
+    print()
 
-print("Recommendations for Jurassic Park (1993)")
-recommendations = recommend_similar_movies("Jurassic Park (1993)")
-print(recommendations[[
-    "title",
-    "similarity_score",
-    "average_rating",
-    "rating_count",
-    "shared_genres"
-]])
-print()
+    print("Recommendations for Jurassic Park (1993)")
+    recommendations = recommend_similar_movies("Jurassic Park (1993)")
+    print(recommendations[[
+        "title",
+        "similarity_score",
+        "average_rating",
+        "rating_count",
+        "shared_genres"
+    ]])
+    print()

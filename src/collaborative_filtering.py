@@ -57,15 +57,16 @@ def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
 
     return top_movies, len(users)
 
-top_movies, user_amount = recommend_from_similar_users("Toy Story (1995)")
+if __name__ == "__main__":
+    top_movies, user_amount = recommend_from_similar_users("Toy Story (1995)")
 
-if top_movies is None:
-    print("Movie not found.")
-else:
-    print("Collaborative recommendations for Toy Story (1995)")
-    print(f"Number of users who liked Toy Story: {user_amount}")
-    print()
-    print(top_movies[["title", "similar_user_likes", "average_similar_user_rating", "genres"]])
+    if top_movies is None:
+        print("Movie not found.")
+    else:
+        print("Collaborative recommendations for Toy Story (1995)")
+        print(f"Number of users who liked Toy Story: {user_amount}")
+        print()
+        print(top_movies[["title", "similar_user_likes", "average_similar_user_rating", "genres"]])
 
 
 
