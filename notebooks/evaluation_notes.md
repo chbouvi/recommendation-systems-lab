@@ -15,6 +15,7 @@ precision@K = relevant recommendations in the top K / K
 Example:
 
 Recommended top 5 movies: 5
+
 Relevant recommendations in top 5: 2
 
 ```text
@@ -46,6 +47,7 @@ recall@K = relevant recommendations in the top K / total relevant movies for tha
 Example:
 
 Relevant movies for the user: 3
+
 Relevant movies found in top 5: 2
 
 ```text
