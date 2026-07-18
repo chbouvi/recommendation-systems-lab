@@ -30,3 +30,18 @@ def test_expected_columns():
     result_set = set(result.columns)
 
     assert expected_set.issubset(result_set)
+
+def test_top_n():
+    movie_title = "Toy Story (1995)"
+    top_n = 5
+
+    result = recommend_similar_movies(movie_title, top_n)
+
+    assert len(result) == 5
+
+def test_fake_movie():
+    movie_title = "Fake Movie"
+
+    result = recommend_similar_movies(movie_title)
+
+    assert result is None
