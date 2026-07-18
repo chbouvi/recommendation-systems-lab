@@ -1,5 +1,5 @@
 import pytest
-from evaluation import precision_at_k, recall_at_k
+from evaluation import precision_at_k, recall_at_k, hit_rate_at_k
 
 def test_valid_precision_at_k():
     recommended_ids = [1, 2, 3, 4, 5, 6]
@@ -34,5 +34,23 @@ def test_recall_at_k_empty_relevant_ids():
     k = 5
 
     result = recall_at_k(recommended_ids, relevant_ids, k)
+
+    assert result == 0
+
+def test_hit_rate_at_k_hit():
+    recommended_ids = [1, 2, 3, 4, 5, 6]
+    relevant_ids = [9, 10, 2]
+    k = 5
+
+    result = hit_rate_at_k(recommended_ids, relevant_ids, k)
+
+    assert result == 1
+
+def test_hit_rate_at_k_no_hit():
+    recommended_ids = [1, 2, 3, 4, 5, 6]
+    relevant_ids = [9, 10, 11]
+    k = 5
+
+    result = hit_rate_at_k(recommended_ids, relevant_ids, k)
 
     assert result == 0
