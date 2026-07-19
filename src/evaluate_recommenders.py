@@ -10,7 +10,9 @@ def get_relevant_movies_for_user(user_id, min_rating=4.0):
 
     return ratings_for_user["movieId"].to_list()
 
-result = get_relevant_movies_for_user(1)
 
-print(f"User 1 liked {len(result)} movies")
-print(result)
+if __name__ == "__main__":
+    result = get_relevant_movies_for_user(1)
+
+    print(f"User 1 liked {len(result)} movies")
+    print(result)
