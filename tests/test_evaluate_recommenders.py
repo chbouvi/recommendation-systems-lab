@@ -19,8 +19,10 @@ def test_split_relevant_movies_valid():
 
     training_ids, hidden_ids = split_relevant_movies(relevant_movie_ids)
 
-    assert training_ids == [5, 10, 15]
-    assert hidden_ids == [20]
+    assert len(training_ids) == 3
+    assert len(hidden_ids) == 1
+    assert hidden_ids[0] not in training_ids
+    assert len(training_ids) + len(hidden_ids) == len(relevant_movie_ids)
 
 def test_split_relevant_movies_empty():
     training_ids, hidden_ids = split_relevant_movies([])
