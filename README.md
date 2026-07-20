@@ -15,6 +15,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Built an initial collaborative filtering baseline using highly rated movies from similar users
 - Added average similar-user rating to collaborative recommendations
 - Added pytest tests for content-based and collaborative filtering behavior
+- Added a one-user evaluation demo using a hidden liked movie and Precision@K, Recall@K, and Hit Rate@K
 
 ## How It Works
 
@@ -27,6 +28,12 @@ The collaborative filtering recommender uses user behavior instead of movie genr
 For `Toy Story (1995)`, the content-based recommender returns movies like `Shrek`, `Toy Story 2`, and `Monsters, Inc.`, while the collaborative filtering recommender returns movies like `The Shawshank Redemption`, `Forrest Gump`, and `Star Wars: Episode IV - A New Hope`.
 
 This illustrates the difference between recommending based on features and recommending based on user behavior.
+
+## Evaluation
+
+The project includes an initial one-user evaluation demo. It hides one movie a user rated highly (rating >= 4.0), generates recommendations from another liked movie, and checks whether the hidden movie appears in the top K recommendations.
+
+The demo computes Precision@K, Recall@K, and Hit Rate@K.
 
 ## Testing
 
