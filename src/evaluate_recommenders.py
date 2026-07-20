@@ -31,23 +31,48 @@ def get_movie_title(movie_id):
 
     return movie_title
 
+def run_evaluation(user_id, k, num_trials):
+    precision_scores = []
+    recall_scores = []
+    hit_rate_scores = []
+    completed_trials = 0
+
+    for _ in range(num_trials):
+        relevant_ids = get_relevant_movies_for_user(user_id)
+        training_ids, hidden_ids = split_relevant_movies(relevant_ids)
+
+        if not training_ids:
+            continue
+
+        seed_movie = random.choice(training_ids)
+        seed_title = get_movie_title(seed_movie)
+
+        recommendations = recommend_similar_movies(seed_title, top_n=k)
+        recommended_ids = recommendations["movieId"].to_list()
+
+        precision_scores.append(precision_at_k(recommended_ids, hidden_ids, k))
+        recall_scores.append(recall_at_k(recommended_ids, hidden_ids, k))
+        hit_rate_scores.append(hit_rate_at_k(recommended_ids, hidden_ids, k))
+        completed_trials += 1
+    
+    if completed_trials == 0:
+        return 0, 0, 0, 0
+    
+    average_precision_score = sum(precision_scores) / completed_trials
+    average_recall_score = sum(recall_scores) / completed_trials
+    average_hit_rate_score = sum(hit_rate_scores) / completed_trials
+
+    return average_precision_score, average_recall_score, average_hit_rate_score, completed_trials
+
 if __name__ == "__main__":
-    relevant_ids = get_relevant_movies_for_user(1)
-    training_ids, hidden_ids = split_relevant_movies(relevant_ids)
-    seed_movie = random.choice(training_ids)
-    seed_title = get_movie_title(seed_movie)
-    k = 5
+    user_id = 1
+    k = 20
+    num_trials = 50
 
-    recommendations = recommend_similar_movies(seed_title, top_n=k)
-    recommended_ids = recommendations["movieId"].to_list()
-    recommended_titles = recommendations["title"].to_list()
+    average_precision_score, average_recall_score, average_hit_rate_score, completed_trials = run_evaluation(user_id, k, num_trials)
 
-    print(f"Seed movie: {seed_title}")
-    print(f"Hidden movie: {get_movie_title(hidden_ids[0])}")
-    print(f"Top {k} Recommendations: {recommended_titles}")
-    print(f"Precision@{k}: {precision_at_k(recommended_ids, hidden_ids, k)}")
-    print(f"Recall@{k}: {recall_at_k(recommended_ids, hidden_ids, k)}")
-    print(f"Hit Rate@{k}: {hit_rate_at_k(recommended_ids, hidden_ids, k)}")
-
-
+    print(f"Completed trials: {completed_trials}/{num_trials}")
+    print(f"Average precision score@{k}: {average_precision_score}")
+    print(f"Average recall score@{k}: {average_recall_score}")
+    print(f"Average hit rate score@{k}: {average_hit_rate_score}")
     
