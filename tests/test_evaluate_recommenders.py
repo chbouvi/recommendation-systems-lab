@@ -1,4 +1,4 @@
-from evaluate_recommenders import get_relevant_movies_for_user, split_relevant_movies
+from evaluate_recommenders import get_relevant_movies_for_user, split_relevant_movies, run_evaluation_for_k_values 
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -29,3 +29,25 @@ def test_split_relevant_movies_empty():
 
     assert training_ids == []
     assert hidden_ids == []
+
+def test_run_evaluation_for_k_values():
+    user_id = 1
+    k_values = [5, 10, 20]
+    num_trials = 5
+
+    average_scores, completed_trials = run_evaluation_for_k_values(user_id, k_values, num_trials)
+
+    assert completed_trials > 0
+    assert 5 in average_scores
+    assert 10 in average_scores
+    assert 20 in average_scores
+    
+    for k in k_values:
+        assert "precision" in average_scores[k]
+        assert "recall" in average_scores[k]
+        assert "hit_rate" in average_scores[k]
+        assert (average_scores[k]["precision"] >= 0) and (average_scores[k]["precision"] <= 1)
+        assert (average_scores[k]["recall"] >= 0) and (average_scores[k]["recall"] <= 1)
+        assert (average_scores[k]["hit_rate"] >= 0) and (average_scores[k]["hit_rate"] <= 1)
+
+    
