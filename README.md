@@ -15,7 +15,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Built an initial collaborative filtering baseline using highly rated movies from similar users
 - Added average similar-user rating to collaborative recommendations
 - Added pytest tests for content-based and collaborative filtering behavior
-- Added repeated one-user evaluation using hidden liked movies and averaged Precision@K, Recall@K, and Hit Rate@K
+- Added repeated one-user evaluation across multiple K values using hidden liked movies and averaged Precision@K, Recall@K, and Hit Rate@K
 
 ## How It Works
 
@@ -33,7 +33,7 @@ This illustrates the difference between recommending based on features and recom
 
 The project includes a repeated one-user evaluation loop. It randomly hides one movie a user rated highly (rating >= 4.0), generates content-based recommendations from another liked movie, and checks whether the hidden movie appears in the top K recommendations.
 
-The evaluation computes average Precision@K, Recall@K, and Hit Rate@K across multiple trials.
+The evaluation computes average Precision@K, Recall@K, and Hit Rate@K across multiple trials and K values.
 
 ## Testing
 
