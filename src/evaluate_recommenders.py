@@ -64,6 +64,7 @@ def run_evaluation(user_id, k, num_trials):
 
     return average_precision_score, average_recall_score, average_hit_rate_score, completed_trials
 
+
 def run_evaluation_for_k_values(user_id, k_values, num_trials):
     scores = {}
 
@@ -119,21 +120,62 @@ def run_evaluation_for_k_values(user_id, k_values, num_trials):
     
     return average_scores, completed_trials
 
-        
+def run_evaluation_for_users(user_ids, k_values, num_trials):
+    results = {k : {} for k in k_values}
 
+    for user in user_ids:
+        average_scores, completed_trials = run_evaluation_for_k_values(user, k_values, num_trials)
+
+        if completed_trials == 0:
+            continue
+
+        for k in k_values:
+            results[k][user] = {
+                "precision": average_scores[k]["precision"],
+                "recall": average_scores[k]["recall"],
+                "hit_rate": average_scores[k]["hit_rate"],
+            }
+    
+    average_scores_by_k = {}
+
+    for k in k_values:
+        precision_scores = []
+        recall_scores = []
+        hit_rate_scores = []
+
+        for user in results[k]:
+            precision_scores.append(results[k][user]["precision"])
+            recall_scores.append(results[k][user]["recall"])
+            hit_rate_scores.append(results[k][user]["hit_rate"])
+
+        average_precision = average_metric_scores(precision_scores)
+        average_recall = average_metric_scores(recall_scores)
+        average_hit_rate = average_metric_scores(hit_rate_scores)
+
+        average_scores_by_k[k] = {
+            "precision" : average_precision,
+            "recall" : average_recall,
+            "hit_rate": average_hit_rate
+        }
+    
+    return average_scores_by_k
+
+def average_metric_scores(scores):
+    if not scores:
+        return 0
+    
+    return sum(scores) / len(scores)
+  
 if __name__ == "__main__":
-    user_id = 1
+    user_ids = [1, 2, 3, 4, 5]
     k_values = [5, 10, 20]
     num_trials = 50
 
-    average_scores, completed_trials = run_evaluation_for_k_values(user_id, k_values, num_trials)
+    average_scores_by_k = run_evaluation_for_users(user_ids, k_values, num_trials)
 
-    print(f"Completed trials: {completed_trials}/{num_trials}")
-    print()
-    
-    for k in average_scores:
-        print(f"Average precision score@{k}: {average_scores[k]['precision']}")
-        print(f"Average recall score@{k}: {average_scores[k]['recall']}")
-        print(f"Average hit rate score@{k}: {average_scores[k]['hit_rate']}")
+    for k in average_scores_by_k:
+        print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']}")
+        print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']}")
+        print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']}")
         print()
     
