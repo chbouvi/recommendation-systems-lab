@@ -1,4 +1,4 @@
-from evaluate_recommenders import get_relevant_movies_for_user, split_relevant_movies, run_evaluation_for_k_values 
+from evaluate_recommenders import get_relevant_movies_for_user, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -50,4 +50,20 @@ def test_run_evaluation_for_k_values():
         assert (average_scores[k]["recall"] >= 0) and (average_scores[k]["recall"] <= 1)
         assert (average_scores[k]["hit_rate"] >= 0) and (average_scores[k]["hit_rate"] <= 1)
 
-    
+def test_run_evaluation_for_users():
+    user_ids = [1, 2]
+    k_values = [5, 10]
+    num_trials = 5
+
+    average_scores_by_k = run_evaluation_for_users(user_ids, k_values, num_trials)
+
+    assert 5 in average_scores_by_k 
+    assert 10 in average_scores_by_k
+
+    for k in k_values:
+        assert "precision" in average_scores_by_k[k]
+        assert "recall" in average_scores_by_k[k]
+        assert "hit_rate" in average_scores_by_k[k]
+        assert (average_scores_by_k[k]["precision"] >= 0) and (average_scores_by_k[k]["precision"] <= 1)
+        assert (average_scores_by_k[k]["recall"] >= 0) and (average_scores_by_k[k]["recall"] <= 1)
+        assert (average_scores_by_k[k]["hit_rate"] >= 0) and (average_scores_by_k[k]["hit_rate"] <= 1)
