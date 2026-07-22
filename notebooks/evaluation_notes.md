@@ -114,3 +114,16 @@ hit rate@5 = 1
 - Precision@K: How many of my recommendations were good?
 - Recall@K: How many of the user's liked movies did I recover?
 - Hit Rate@K: Did I get at least one good recommendation?
+
+## Comparing Recommenders
+
+Current evaluation only uses the content-based recommender.
+
+Next goal:
+Use the same hidden-movie evaluation setup to compare content-based filtering and collaborative filtering.
+
+Content-based:
+Uses one seed movie title and recommends movies with similar genres.
+
+Collaborative:
+Uses one seed movie title, finds users who liked that movie, then recommends other movies those users liked.
