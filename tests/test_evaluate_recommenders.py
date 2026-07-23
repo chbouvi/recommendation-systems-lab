@@ -1,4 +1,4 @@
-from evaluate_recommenders import get_relevant_movies_for_user, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users
+from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -27,8 +27,8 @@ def test_split_relevant_movies_valid():
 def test_split_relevant_movies_empty():
     training_ids, hidden_ids = split_relevant_movies([])
 
-    assert training_ids == []
-    assert hidden_ids == []
+    assert not training_ids
+    assert not hidden_ids
 
 def test_run_evaluation_for_k_values():
     user_id = 1
@@ -69,3 +69,30 @@ def test_run_evaluation_for_users():
         assert (average_scores_by_k[k]["precision"] >= 0) and (average_scores_by_k[k]["precision"] <= 1)
         assert (average_scores_by_k[k]["recall"] >= 0) and (average_scores_by_k[k]["recall"] <= 1)
         assert (average_scores_by_k[k]["hit_rate"] >= 0) and (average_scores_by_k[k]["hit_rate"] <= 1)
+
+def test_get_recommendation_ids_content():
+    seed_title = "Toy Story (1995)"
+    method = "content"
+    k = 5
+
+    recommended_ids = get_recommendation_ids(seed_title, method, k)
+
+    assert isinstance(recommended_ids, list)
+
+def test_get_recommendation_ids_collaborative():
+    seed_title = "Toy Story (1995)"
+    method = "collaborative"
+    k = 5
+
+    recommended_ids = get_recommendation_ids(seed_title, method, k)
+
+    assert isinstance(recommended_ids, list) 
+
+def test_get_recommendation_ids_invalid_method():
+    seed_title = "Toy Story (1995)"
+    method = "invalid"
+    k = 5
+
+    recommended_ids = get_recommendation_ids(seed_title, method, k)
+
+    assert not recommended_ids
