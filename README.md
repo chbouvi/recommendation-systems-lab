@@ -33,13 +33,13 @@ This illustrates the difference between recommending based on features and recom
 
 ## Evaluation
 
-The project includes a repeated one-user evaluation loop. It randomly hides one movie a user rated highly (rating >= 4.0), generates recommendations from another liked movie, and checks whether the hidden movie appears in the top K recommendations.
+The project includes an evaluation setup using a hidden movie. It randomly hides one movie a user rated highly (rating >= 4.0), generates recommendations from another liked movie, and checks whether the hidden movie appears in the top K recommendations.
 
 The evaluation computes average Precision@K, Recall@K, and Hit Rate@K across multiple trials and K values.
 
 The evaluation also averages metrics across multiple users, which gives a broader view than a single-user demo.
 
-The evaluation can now run either the content-based or collaborative recommender, making it possible to compare their Precision@K, Recall@K, and Hit Rate@K within the same pipeline.
+The evaluation can run either the content-based or collaborative recommender across random user samples, multiple trials per user, and multiple K values. 
 
 ## Testing
 
