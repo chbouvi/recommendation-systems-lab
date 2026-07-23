@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 from content_based import recommend_similar_movies
+from collaborative_filtering import recommend_from_similar_users
 from evaluation import precision_at_k, recall_at_k, hit_rate_at_k
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -13,6 +14,18 @@ def get_relevant_movies_for_user(user_id, min_rating=4.0):
     ]
 
     return ratings_for_user["movieId"].to_list()
+
+def get_recommendation_ids(seed_title, method, k):
+    if method == "content":
+        recommendations = recommend_similar_movies(seed_title, top_n=k)
+        recommended_ids = recommendations["movieId"].to_list()
+    elif method == "collaborative":
+        top_movies, _ = recommend_from_similar_users(seed_title, top_n=k)
+        recommended_ids = top_movies["movieId"].to_list()
+    else:
+        return []
+    
+    return recommended_ids
 
 def split_relevant_movies(relevant_movie_ids):
     if not relevant_movie_ids:
@@ -31,7 +44,7 @@ def get_movie_title(movie_id):
 
     return movie_title
 
-def run_evaluation(user_id, k, num_trials):
+def run_evaluation(user_id, method, k, num_trials):
     precision_scores = []
     recall_scores = []
     hit_rate_scores = []
@@ -47,8 +60,7 @@ def run_evaluation(user_id, k, num_trials):
         seed_movie = random.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
 
-        recommendations = recommend_similar_movies(seed_title, top_n=k)
-        recommended_ids = recommendations["movieId"].to_list()
+        recommended_ids = get_recommendation_ids(seed_title, method, k)
 
         precision_scores.append(precision_at_k(recommended_ids, hidden_ids, k))
         recall_scores.append(recall_at_k(recommended_ids, hidden_ids, k))
@@ -65,7 +77,7 @@ def run_evaluation(user_id, k, num_trials):
     return average_precision_score, average_recall_score, average_hit_rate_score, completed_trials
 
 
-def run_evaluation_for_k_values(user_id, k_values, num_trials):
+def run_evaluation_for_k_values(user_id, method, k_values, num_trials):
     scores = {}
 
     for k in k_values:
@@ -87,8 +99,7 @@ def run_evaluation_for_k_values(user_id, k_values, num_trials):
         seed_movie = random.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
 
-        recommendations = recommend_similar_movies(seed_title, top_n=max(k_values))
-        recommended_ids = recommendations["movieId"].to_list()
+        recommended_ids = get_recommendation_ids(seed_title, method, max(k_values))
 
         for k in k_values:
             precision = precision_at_k(recommended_ids, hidden_ids, k)
@@ -120,11 +131,11 @@ def run_evaluation_for_k_values(user_id, k_values, num_trials):
     
     return average_scores, completed_trials
 
-def run_evaluation_for_users(user_ids, k_values, num_trials):
+def run_evaluation_for_users(user_ids, method, k_values, num_trials):
     results = {k : {} for k in k_values}
 
     for user in user_ids:
-        average_scores, completed_trials = run_evaluation_for_k_values(user, k_values, num_trials)
+        average_scores, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials)
 
         if completed_trials == 0:
             continue
@@ -170,8 +181,9 @@ if __name__ == "__main__":
     user_ids = [1, 2, 3, 4, 5]
     k_values = [5, 10, 20]
     num_trials = 50
+    method = "content"
 
-    average_scores_by_k = run_evaluation_for_users(user_ids, k_values, num_trials)
+    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
 
     for k in average_scores_by_k:
         print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']}")

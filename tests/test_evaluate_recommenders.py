@@ -34,8 +34,9 @@ def test_run_evaluation_for_k_values():
     user_id = 1
     k_values = [5, 10, 20]
     num_trials = 5
+    method = "content"
 
-    average_scores, completed_trials = run_evaluation_for_k_values(user_id, k_values, num_trials)
+    average_scores, completed_trials = run_evaluation_for_k_values(user_id, method, k_values, num_trials)
 
     assert completed_trials > 0
     assert 5 in average_scores
@@ -54,8 +55,9 @@ def test_run_evaluation_for_users():
     user_ids = [1, 2]
     k_values = [5, 10]
     num_trials = 5
+    method = "content"
 
-    average_scores_by_k = run_evaluation_for_users(user_ids, k_values, num_trials)
+    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
 
     assert 5 in average_scores_by_k 
     assert 10 in average_scores_by_k
