@@ -181,13 +181,19 @@ if __name__ == "__main__":
     user_ids = [1, 2, 3, 4, 5]
     k_values = [5, 10, 20]
     num_trials = 50
-    method = "content"
+    methods = ["content", "collaborative"]
 
-    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
+    for method in methods:
+        average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
 
-    for k in average_scores_by_k:
-        print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']}")
-        print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']}")
-        print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']}")
+        print(f"Recommender: {method}")
+        print()
+
+        for k in average_scores_by_k:
+            print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']}")
+            print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']}")
+            print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']}")
+            print()
+        
         print()
     
