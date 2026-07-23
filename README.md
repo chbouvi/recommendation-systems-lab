@@ -39,11 +39,11 @@ The evaluation computes average Precision@K, Recall@K, and Hit Rate@K across mul
 
 The evaluation also averages metrics across multiple users, which gives a broader view than a single-user demo.
 
-The evaluation can now run either the content-based or collaborative recommender, making it possible to compare their Precision@K, Recall@K, and Hit Rate@K with the same pipeline.
+The evaluation can now run either the content-based or collaborative recommender, making it possible to compare their Precision@K, Recall@K, and Hit Rate@K within the same pipeline.
 
 ## Testing
 
-The project uses pytest for automated tests. Tests live in the root-level `tests/` folder, separate from the recommender code in `src/`.
+The project uses pytest for automated tests. Tests live in the `tests/` folder, separate from the recommender code in `src/`.
 
 Run the test suite with:
 
@@ -55,15 +55,14 @@ Current tests check that both recommenders handle valid and invalid movie titles
 
 ## MovieLens
 
-MovieLens is a public movie ratings dataset commonly used for recommendation systems. It includes user ratings, movie titles, and movie genres. This makes it a good dataset for comparing recommendation approaches.
+MovieLens is a public movie ratings dataset commonly used for recommendation systems. It includes user ratings, movie titles, and movie genres.
 
 ## Planned Features
 
+- Evaluate more users and explain method comparison results
 - Improve collaborative filtering recommendation ranking
-- Expand comparison between content-based filtering and collaborative filtering
-- Add recommendation quality metrics
 - Build a simple Streamlit dashboard
-- Add tests for evaluation metrics and dashboard logic
+- Expand tests for evaluation metrics and dashboard logic
 
 ## Planned Tech Stack
 

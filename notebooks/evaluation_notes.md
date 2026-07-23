@@ -117,10 +117,7 @@ hit rate@5 = 1
 
 ## Comparing Recommenders
 
-Current evaluation only uses the content-based recommender.
-
-Next goal:
-Use the same hidden-movie evaluation setup to compare content-based filtering and collaborative filtering.
+The evaluation now uses the same setup to compare content-based filtering and collaborative filtering.
 
 Content-based:
 Uses one seed movie title and recommends movies with similar genres.
@@ -130,6 +127,6 @@ Uses one seed movie title, finds users who liked that movie, then recommends oth
 
 ## Initial Comparison Result
 
-Using users 1-5, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering recovered hidden liked movies more often than the content-based recommender.
+Using users 1-5, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering was able to find hidden liked movies more often than the content-based recommender.
 
-This makes sense because the collaborative method uses user behavior, while the current content-based method only uses movie genres.
+This makes sense because the collaborative recommender uses patterns in user ratings, while the content-based recommender only uses movie genres.
