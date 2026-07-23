@@ -127,3 +127,9 @@ Uses one seed movie title and recommends movies with similar genres.
 
 Collaborative:
 Uses one seed movie title, finds users who liked that movie, then recommends other movies those users liked.
+
+## Initial Comparison Result
+
+Using users 1-5, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering recovered hidden liked movies more often than the content-based recommender.
+
+This makes sense because the collaborative method uses user behavior, while the current content-based method only uses movie genres.
