@@ -178,10 +178,15 @@ def average_metric_scores(scores):
     return sum(scores) / len(scores)
   
 if __name__ == "__main__":
-    user_ids = [1, 2, 3, 4, 5]
+    user_ids = random.sample(range(1, 611), 50)
     k_values = [5, 10, 20]
     num_trials = 50
     methods = ["content", "collaborative"]
+
+    print(f"Users evaluated: {len(user_ids)}")
+    print(f"Trials per user: {num_trials}")
+    print(f"K values: {k_values}")
+    print()
 
     for method in methods:
         average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
@@ -190,9 +195,9 @@ if __name__ == "__main__":
         print()
 
         for k in average_scores_by_k:
-            print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']}")
-            print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']}")
-            print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']}")
+            print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']:.4f}")
+            print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']:.4f}")
+            print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']:.4f}")
             print()
         
         print()
