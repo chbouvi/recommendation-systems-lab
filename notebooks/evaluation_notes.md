@@ -129,4 +129,17 @@ Uses one seed movie title, finds users who liked that movie, then recommends oth
 
 Using users 1-5, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering was able to find hidden liked movies more often than the content-based recommender.
 
+## Larger Comparison Result
+
+Using 50 randomly selected users, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering found hidden liked movies more often than the content-based recommender again. 
+
+This evaluation ran 2,500 hidden-movie trials per recommender.
+
+Example output: 
+
+```text
+Content-based Hit Rate@20: 0.0564
+Collaborative Hit Rate@20: 0.2212
+```
+
 This makes sense because the collaborative recommender uses patterns in user ratings, while the content-based recommender only uses movie genres.
