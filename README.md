@@ -51,7 +51,7 @@ Run the test suite with:
 pytest tests/
 ```
 
-Current tests check that both recommenders handle valid and invalid movie titles, return expected columns, exclude the original movie, and respect parameters like `top_n` and `min_rating`.
+Current tests check that recommenders handle valid and invalid inputs, return expected outputs, respect parameters like `top_n` and `min_rating`, compute evaluation metrics correctly, hold out hidden movies during evaluation, run evaluation across multiple K values and users, and support method selection between content-based and collaborative recommendations.
 
 ## MovieLens
 
