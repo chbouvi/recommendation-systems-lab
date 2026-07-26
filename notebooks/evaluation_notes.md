@@ -143,3 +143,9 @@ Collaborative Hit Rate@20: 0.2212
 ```
 
 This makes sense because the collaborative recommender uses patterns in user ratings, while the content-based recommender only uses movie genres.
+
+## Next Direction
+
+- Run evaluation on more users and compare whether the same pattern holds.
+- Improve the collaborative filtering ranking logic.
+- Add a clearer summary table when comparing recommender results.
