@@ -182,6 +182,7 @@ if __name__ == "__main__":
     k_values = [5, 10, 20]
     num_trials = 50
     methods = ["content", "collaborative"]
+    results_table = []
 
     print(f"Users evaluated: {len(user_ids)}")
     print(f"Trials per user: {num_trials}")
@@ -191,14 +192,18 @@ if __name__ == "__main__":
     for method in methods:
         average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
 
-        print(f"Recommender: {method}")
-        print()
-
         for k in average_scores_by_k:
-            print(f"Average precision score@{k}: {average_scores_by_k[k]['precision']:.4f}")
-            print(f"Average recall score@{k}: {average_scores_by_k[k]['recall']:.4f}")
-            print(f"Average hit rate score@{k}: {average_scores_by_k[k]['hit_rate']:.4f}")
-            print()
-        
-        print()
+            results_table.append({
+                "method": method,
+                "k": k,
+                "precision": average_scores_by_k[k]["precision"],
+                "recall": average_scores_by_k[k]["recall"],
+                "hit_rate": average_scores_by_k[k]["hit_rate"]
+            })
+    
+    results_df = pd.DataFrame(results_table)
+
+    results_df = results_df.round(4)
+
+    print(results_df)
     
