@@ -23,6 +23,7 @@ def test_expected_columns():
 
     expected_set = {
         "title",
+        "collaborative_score",
         "similar_user_likes",
         "average_similar_user_rating",
         "genres"
