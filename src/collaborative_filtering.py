@@ -42,7 +42,9 @@ def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
 
     movie_stats.columns = ["movieId", "similar_user_likes", "average_similar_user_rating"]
 
-    movie_stats["collaborative_score"] = movie_stats["similar_user_likes"] * movie_stats["average_similar_user_rating"]
+    movie_stats["similar_user_like_ratio"] = movie_stats["similar_user_likes"] / len(users)
+
+    movie_stats["collaborative_score"] = movie_stats["similar_user_like_ratio"] * movie_stats["average_similar_user_rating"]
 
     movie_stats = movie_stats.sort_values(
         by=["collaborative_score", "similar_user_likes", "average_similar_user_rating"],
@@ -68,7 +70,7 @@ if __name__ == "__main__":
         print("Collaborative recommendations for Toy Story (1995)")
         print(f"Number of users who liked Toy Story: {user_amount}")
         print()
-        print(top_movies[["title", "collaborative_score", "similar_user_likes", "average_similar_user_rating", "genres"]])
+        print(top_movies[["title", "collaborative_score", "similar_user_like_ratio", "similar_user_likes", "average_similar_user_rating", "genres"]])
 
 
 
