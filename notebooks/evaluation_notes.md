@@ -162,7 +162,11 @@ Then I combine that ratio with the average rating from similar users:
 collaborative_score = similar_user_like_ratio * average_similar_user_rating
 ```
 
+## Comparison Result with New Collaborative Ranking
+
+After normalizing the collaborative score, collaborative filtering still performed better than content-based filtering in the evaluation. The normalized score is also easier to interpret because it uses the share of similar users who liked each movie instead of only the count.
+
 ## Next Direction
 
 - Run evaluation on more users and compare whether the same pattern holds.
-- Improve the collaborative filtering ranking logic.
+- Continue improving the collaborative filtering ranking logic.
