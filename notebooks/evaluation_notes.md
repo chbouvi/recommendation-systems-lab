@@ -146,6 +146,22 @@ This makes sense because the collaborative recommender uses patterns in user rat
 
 The evaluation output includes a summary table for comparing the recommender results.
 
+## Collaborative Ranking Explanation
+
+The collaborative recommender first counts how many similar users liked each movie.
+
+To make the count easier to compare, I convert it into a ratio:
+
+```text
+similar_user_like_ratio = similar_user_likes / total_similar_users
+```
+
+Then I combine that ratio with the average rating from similar users:
+
+```text
+collaborative_score = similar_user_like_ratio * average_similar_user_rating
+```
+
 ## Next Direction
 
 - Run evaluation on more users and compare whether the same pattern holds.
