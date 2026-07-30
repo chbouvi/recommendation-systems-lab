@@ -18,6 +18,8 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added repeated one-user evaluation across multiple K values using hidden liked movies and averaged Precision@K, Recall@K, and Hit Rate@K
 - Added multi-user evaluation across multiple K values
 - Added evaluation support for recommender method selection (content vs collaborative)
+- Added normalized collaborative scoring using the ratio of similar users who liked each movie and the average rating
+- Added evaluation summaries saved as CSV
 
 ## How It Works
 
@@ -25,7 +27,7 @@ The project currently includes two recommendation approaches.
 
 The content-based recommender looks at each movie's genres and compares movies based on how many genres they have in common. For example, if two movies both include `Adventure`, `Animation`, and `Comedy`, they get a higher similarity score than movies with fewer overlapping genres. If multiple movies have the same similarity score, the recommender uses rating count and average rating to help decide the order.
 
-The collaborative filtering recommender uses user behavior instead of movie genres. It finds users who rated a selected movie highly, then recommends other movies those users also rated highly. It also tracks how many similar users liked each movie and their average rating for that movie.
+The collaborative filtering recommender uses user behavior instead of movie genres. It finds users who rated a selected movie highly, then recommends other movies those users also rated highly. It also tracks how many similar users liked each movie, their average rating for that movie, and a normalized collaborative score using the ratio of similar users who liked each movie and the average rating.
 
 For `Toy Story (1995)`, the content-based recommender returns movies like `Shrek`, `Toy Story 2`, and `Monsters, Inc.`, while the collaborative filtering recommender returns movies like `The Shawshank Redemption`, `Forrest Gump`, and `Star Wars: Episode IV - A New Hope`.
 
@@ -62,7 +64,7 @@ MovieLens is a public movie ratings dataset commonly used for recommendation sys
 ## Planned Features
 
 - Evaluate more users and explain method comparison results
-- Improve collaborative filtering recommendation ranking
+- Continue improving collaborative filtering recommendation ranking
 - Build a simple Streamlit dashboard
 - Expand tests for evaluation metrics and dashboard logic
 
