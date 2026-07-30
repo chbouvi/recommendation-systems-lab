@@ -1,4 +1,4 @@
-from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users
+from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users, build_results_table
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -96,3 +96,29 @@ def test_get_recommendation_ids_invalid_method():
     recommended_ids = get_recommendation_ids(seed_title, method, k)
 
     assert not recommended_ids
+
+def test_build_results_table_expected_columns():
+    methods = ["content"]
+    user_ids = [1, 2]
+    k_values = [5, 10]
+    num_trials = 5
+
+    results_df = build_results_table(methods, user_ids, k_values, num_trials) 
+
+    expected_set = {
+        "method",
+        "k",
+        "precision",
+        "recall",
+        "hit_rate",
+        "num_users",
+        "trials_per_user"
+    }
+
+    results_set = set(results_df.columns)
+
+    assert expected_set.issubset(results_set)
+    assert not results_df.empty
+    assert len(results_df) == len(methods) * len(k_values)
+
+    

@@ -176,18 +176,9 @@ def average_metric_scores(scores):
         return 0
     
     return sum(scores) / len(scores)
-  
-if __name__ == "__main__":
-    user_ids = random.sample(range(1, 611), 50)
-    k_values = [5, 10, 20]
-    num_trials = 50
-    methods = ["content", "collaborative"]
-    results_table = []
 
-    print(f"Users evaluated: {len(user_ids)}")
-    print(f"Trials per user: {num_trials}")
-    print(f"K values: {k_values}")
-    print()
+def build_results_table(methods, user_ids, k_values, num_trials):
+    results_table = []
 
     for method in methods:
         average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
@@ -202,10 +193,23 @@ if __name__ == "__main__":
             })
     
     results_df = pd.DataFrame(results_table)
-
     results_df = results_df.round(4)
-
     results_df[["num_users", "trials_per_user"]] = [len(user_ids), num_trials]
+
+    return results_df
+  
+if __name__ == "__main__":
+    user_ids = random.sample(range(1, 611), 50)
+    k_values = [5, 10, 20]
+    num_trials = 50
+    methods = ["content", "collaborative"]
+
+    print(f"Users evaluated: {len(user_ids)}")
+    print(f"Trials per user: {num_trials}")
+    print(f"K values: {k_values}")
+    print()
+
+    results_df = build_results_table(methods, user_ids, k_values, num_trials)
 
     results_df.to_csv("outputs/evaluation_summary.csv", index=False)
 
