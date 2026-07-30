@@ -39,7 +39,9 @@ The evaluation computes average Precision@K, Recall@K, and Hit Rate@K across mul
 
 The evaluation also averages metrics across multiple users, which gives a broader view than a single-user demo.
 
-The evaluation can run either the content-based or collaborative recommender across random user samples, multiple trials per user, and multiple K values. 
+The evaluation can run either the content-based or collaborative recommender across random user samples, multiple trials per user, and multiple K values.
+
+The evaluation script also saves a summary CSV with each recommender method, K value, precision, recall, hit rate, number of users, and trials per user.
 
 ## Testing
 
