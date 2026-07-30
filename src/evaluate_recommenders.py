@@ -205,5 +205,9 @@ if __name__ == "__main__":
 
     results_df = results_df.round(4)
 
-    print(results_df)
+    results_df[["num_users", "trials_per_user"]] = [len(user_ids), num_trials]
+
+    results_df.to_csv("outputs/evaluation_summary.csv", index=False)
+
+    print("Saved results to outputs folder")
     
