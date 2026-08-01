@@ -63,7 +63,7 @@ MovieLens is a public movie ratings dataset commonly used for recommendation sys
 
 ## Planned Features
 
-- Evaluate more users and explain method comparison results
+- Explain method comparison results more clearly
 - Continue improving collaborative filtering recommendation ranking
 - Build a simple Streamlit dashboard
 - Expand tests for evaluation metrics and dashboard logic
