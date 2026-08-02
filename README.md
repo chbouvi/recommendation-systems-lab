@@ -20,6 +20,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added evaluation support for recommender method selection (content vs collaborative)
 - Added normalized collaborative scoring using the ratio of similar users who liked each movie and the average rating
 - Added evaluation summaries saved as CSV
+- Added an initial Streamlit dashboard for viewing evaluation outputs and Hit Rate@K comparisons
 
 ## How It Works
 
@@ -65,7 +66,7 @@ MovieLens is a public movie ratings dataset commonly used for recommendation sys
 
 - Explain method comparison results more clearly
 - Continue improving collaborative filtering recommendation ranking
-- Build a simple Streamlit dashboard
+- Improve the Streamlit dashboard with more charts and examples
 - Expand tests for evaluation metrics and dashboard logic
 
 ## Planned Tech Stack
