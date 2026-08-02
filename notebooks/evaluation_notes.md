@@ -146,6 +146,19 @@ This makes sense because the collaborative recommender uses patterns in user rat
 
 The evaluation output includes a summary table for comparing the recommender results.
 
+## 100-User Comparison Result
+
+Using 100 randomly selected users, 50 trials per user, and K values of 5, 10, and 20, collaborative filtering still found hidden liked movies more often than content-based.
+
+The evaluation ran 5,000 hidden-movie trials per recommender.
+
+Example output:
+
+```text
+Content-based Hit Rate@20: 0.0488
+Collaborative Hit Rate@20: 0.1762
+```
+
 ## Collaborative Ranking Explanation
 
 The collaborative recommender first counts how many similar users liked each movie.

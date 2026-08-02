@@ -199,7 +199,7 @@ def build_results_table(methods, user_ids, k_values, num_trials):
     return results_df
   
 if __name__ == "__main__":
-    user_ids = random.sample(range(1, 611), 50)
+    user_ids = random.sample(range(1, 611), 100)
     k_values = [5, 10, 20]
     num_trials = 50
     methods = ["content", "collaborative"]
