@@ -9,3 +9,5 @@ The collaborative filtering recommender uses user rating behavior instead of mov
 To evaluate the recommenders, I use a hidden-movie setup. For each trial, I hide one movie a user rated highly, generate recommendations from another movie that user liked, and check whether the hidden movie appears in the top `K` recommendations.
 
 I compare the recommenders using `Precision@K`, `Recall@K`, and `Hit Rate@K` across multiple users, multiple trials, and multiple `K` values. The evaluation script can run both recommendation methods and saves a summary CSV of the results.
+
+I also built an initial Streamlit dashboard to make the evaluation results easier to view. The dashboard loads the saved evaluation summary CSV, displays the results table, and shows grouped bar charts comparing content-based and collaborative filtering across different K values and metrics.
