@@ -36,7 +36,9 @@ elif select_metric == "Hit Rate":
 else:
     final_metric = default
 
+st.subheader("Evaluation Results")
 st.dataframe(outputs_df, hide_index=True)
+st.caption("Results are averaged across 100 users and 50 trials per user.")
 
 outputs_df["k_label"] = outputs_df["k"].astype(str)
 
@@ -55,4 +57,5 @@ fig1.update_layout(
     xaxis_type="category"
 )
 
+st.subheader("Metric Comparison")
 st.plotly_chart(fig1, width="stretch")
