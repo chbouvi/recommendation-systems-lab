@@ -181,6 +181,7 @@ After normalizing the collaborative score, collaborative filtering still perform
 
 ## Next Direction
 
-- Run a larger evaluation to check whether collaborative filtering still outperforms content-based.
-- Build a simple Streamlit dashboard for recommendation examples and evaluation results.
-- Continue improving the collaborative filtering ranking logic.
+- Explain the method comparison results more clearly.
+- Continue improving collaborative filtering recommendation ranking.
+- Improve the Streamlit dashboard with more charts and examples.
+- Expand tests for evaluation metrics and dashboard logic.

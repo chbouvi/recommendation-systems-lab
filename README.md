@@ -58,6 +58,14 @@ pytest tests/
 
 Current tests check that recommenders handle valid and invalid inputs, return expected outputs, respect parameters like `top_n` and `min_rating`, compute evaluation metrics correctly, hold out hidden movies during evaluation, run evaluation across multiple K values and users, and support method selection between content-based and collaborative recommendations.
 
+## Dashboard
+
+Run the Streamlit dashboard with:
+
+```bash
+streamlit run src/dashboard.py
+```
+
 ## MovieLens
 
 MovieLens is a public movie ratings dataset commonly used for recommendation systems. It includes user ratings, movie titles, and movie genres.
