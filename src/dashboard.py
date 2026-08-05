@@ -5,8 +5,24 @@ from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
-movies_df = pd.read_csv("data/ml-latest-small/movies.csv")
-movie_titles = movies_df["title"].to_list()
+df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
+df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
+
+high_ratings = df_ratings[(df_ratings["rating"] >= 4.0)]
+
+high_rating_count = high_ratings.groupby("movieId")["rating"].agg("count").reset_index()
+
+high_rating_count.columns = ["movieId", "ratings_count"]
+
+valid_movie_counts = high_rating_count[
+    (high_rating_count["ratings_count"] >= 10)
+]
+
+valid_movies = df_movies[
+    (df_movies["movieId"].isin(valid_movie_counts["movieId"]))
+]
+
+movie_titles = valid_movies["title"].to_list()
 
 st.title("Recommendation Systems Lab")
 
