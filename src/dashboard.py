@@ -5,6 +5,8 @@ from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
+movies_df = pd.read_csv("data/ml-latest-small/movies.csv")
+movie_titles = movies_df["title"].to_list()
 
 st.title("Recommendation Systems Lab")
 
@@ -92,7 +94,11 @@ st.plotly_chart(fig1, width="stretch")
 st.caption(f"{best_method} has higher {select_metric}@K in this run.")
 
 st.subheader("Example Recommendations")
-seed_title = "Toy Story (1995)"
+
+seed_title = st.selectbox(
+    "Choose seed movie...", 
+    movie_titles, 
+)
 
 st.caption(f"Seed movie: {seed_title}")
 
