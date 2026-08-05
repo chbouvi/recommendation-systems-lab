@@ -87,3 +87,4 @@ fig1.update_layout(
 
 st.subheader("Metric Comparison")
 st.plotly_chart(fig1, width="stretch")
+st.caption(f"{best_method} has higher {select_metric}@K in this run.")
