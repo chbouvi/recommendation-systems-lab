@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+from collaborative_filtering import recommend_from_similar_users
+from content_based import recommend_similar_movies
 
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
 
@@ -88,3 +90,25 @@ fig1.update_layout(
 st.subheader("Metric Comparison")
 st.plotly_chart(fig1, width="stretch")
 st.caption(f"{best_method} has higher {select_metric}@K in this run.")
+
+st.subheader("Example Recommendations")
+seed_title = "Toy Story (1995)"
+
+st.caption(f"Seed movie: {seed_title}")
+
+content_recommendations = recommend_similar_movies(seed_title)
+content_recommendations = content_recommendations[["title"]]
+content_recommendations.columns = ["Movie Title"]
+
+top_movies_collaborative, _ = recommend_from_similar_users(seed_title)
+top_movies_collaborative = top_movies_collaborative[["title"]]
+top_movies_collaborative.columns = ["Movie Title"]
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.caption("Content-based")
+    st.dataframe(content_recommendations, hide_index=True)
+with col2:
+    st.caption("Collaborative filtering")
+    st.dataframe(top_movies_collaborative, hide_index=True)
