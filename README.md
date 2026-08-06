@@ -20,7 +20,9 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added evaluation support for recommender method selection (content vs collaborative)
 - Added normalized collaborative scoring using the ratio of similar users who liked each movie and the average rating
 - Added evaluation summaries saved as CSV
-- Added an initial Streamlit dashboard for viewing evaluation outputs and Hit Rate@K comparisons
+- Added a Streamlit dashboard for viewing evaluation outputs, summary metrics, and metric comparisons
+- Added interactive dashboard examples for comparing content-based and collaborative recommendations from a selected seed movie
+- Filtered dashboard seed movie choices to movies with enough high ratings for collaborative filtering
 
 ## How It Works
 
@@ -59,6 +61,8 @@ pytest tests/
 Current tests check that recommenders handle valid and invalid inputs, return expected outputs, respect parameters like `top_n` and `min_rating`, compute evaluation metrics correctly, hold out hidden movies during evaluation, run evaluation across multiple K values and users, and support method selection between content-based and collaborative recommendations.
 
 ## Dashboard
+
+The dashboard displays evaluation results, summary metrics, metric comparison charts, and example recommendations for a selected seed movie.
 
 Run the Streamlit dashboard with:
 
