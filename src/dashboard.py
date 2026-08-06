@@ -133,4 +133,7 @@ with col1:
     st.dataframe(content_recommendations, hide_index=True)
 with col2:
     st.caption("Collaborative filtering")
-    st.dataframe(top_movies_collaborative, hide_index=True)
+    if top_movies_collaborative.empty:
+        st.info("Not enough similar-user data for this movie. Try a more popular seed movie.")
+    else:
+        st.dataframe(top_movies_collaborative, hide_index=True)
