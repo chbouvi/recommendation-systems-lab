@@ -181,6 +181,10 @@ Collaborative filtering also now filters possible recommendations by a minimum n
 
 After normalizing the collaborative score, collaborative filtering still performed better than content-based filtering in the evaluation. The normalized score is also easier to interpret because it uses the share of similar users who liked each movie instead of only the count.
 
+## Comparison Results with Minimum Support Filter
+
+With the minimum support filter, stricter thresholds reduced low-support candidate movies, but lowered the metrics in evaluation. With minimum similar-user likes values of 2, 5, and 10, the metrics worsened as the value became stricter. The project will use the lighter default of 2 because it had better retrieval performance in this experiment.
+
 ## Next Direction
 
 - Explain the method comparison results more clearly.
