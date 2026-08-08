@@ -49,3 +49,9 @@ def test_min_rating():
 
     assert user_amount2 <= user_amount1
 
+def test_min_similar_user_likes():
+    movie_title = "Toy Story (1995)"
+
+    top_movies, _ = recommend_from_similar_users(movie_title, min_similar_user_likes=20)
+
+    assert (top_movies["similar_user_likes"] >= 20).all()
