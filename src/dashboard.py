@@ -8,21 +8,22 @@ outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
-high_ratings = df_ratings[(df_ratings["rating"] >= 4.0)]
+def get_valid_seed_movie_titles(df_movies, df_ratings, min_rating=4.0, min_rating_count=10):
+    high_ratings = df_ratings[(df_ratings["rating"] >= min_rating)]
 
-high_rating_count = high_ratings.groupby("movieId")["rating"].agg("count").reset_index()
+    high_rating_count = high_ratings.groupby("movieId")["rating"].agg("count").reset_index()
 
-high_rating_count.columns = ["movieId", "ratings_count"]
+    high_rating_count.columns = ["movieId", "ratings_count"]
 
-valid_movie_counts = high_rating_count[
-    (high_rating_count["ratings_count"] >= 10)
-]
+    valid_movie_counts = high_rating_count[
+        (high_rating_count["ratings_count"] >= min_rating_count)
+    ]
 
-valid_movies = df_movies[
-    (df_movies["movieId"].isin(valid_movie_counts["movieId"]))
-]
+    valid_movies = df_movies[
+        (df_movies["movieId"].isin(valid_movie_counts["movieId"]))
+    ]
 
-movie_titles = valid_movies["title"].to_list()
+    return valid_movies["title"].to_list()
 
 st.title("Recommendation Systems Lab")
 
@@ -113,7 +114,7 @@ st.subheader("Example Recommendations")
 
 seed_title = st.selectbox(
     "Choose seed movie...", 
-    movie_titles, 
+    get_valid_seed_movie_titles(df_movies, df_ratings), 
 )
 
 st.caption(f"Seed movie: {seed_title}")
