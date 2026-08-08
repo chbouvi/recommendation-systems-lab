@@ -22,7 +22,7 @@ def find_users_who_like_movie(movie_title, min_rating):
 
     return liked_ratings["userId"].unique(), movie_id
 
-def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
+def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10, min_similar_user_likes=2):
     users, movie_id = find_users_who_like_movie(movie_title, min_rating)
 
     if users is None:
@@ -41,6 +41,8 @@ def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10):
     )
 
     movie_stats.columns = ["movieId", "similar_user_likes", "average_similar_user_rating"]
+
+    movie_stats = movie_stats[movie_stats["similar_user_likes"] >= min_similar_user_likes]
 
     movie_stats["similar_user_like_ratio"] = movie_stats["similar_user_likes"] / len(users)
 
