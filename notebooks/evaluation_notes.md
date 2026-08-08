@@ -182,6 +182,7 @@ After normalizing the collaborative score, collaborative filtering still perform
 ## Next Direction
 
 - Explain the method comparison results more clearly.
-- Continue improving collaborative filtering recommendation ranking.
+- Review the collaborative filtering scoring formula.
+- Improve collaborative filtering beyond the dashboard by adding stronger ranking logic.
 - Improve the Streamlit dashboard with more charts and examples.
 - Expand tests for evaluation metrics and dashboard logic.
