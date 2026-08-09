@@ -2,6 +2,7 @@ import pandas as pd
 import random
 from content_based import recommend_similar_movies
 from collaborative_filtering import recommend_from_similar_users
+from popular_baseline import recommend_popular_movies
 from evaluation import precision_at_k, recall_at_k, hit_rate_at_k
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -21,6 +22,13 @@ def get_recommendation_ids(seed_title, method, k):
         recommended_ids = recommendations["movieId"].to_list()
     elif method == "collaborative":
         top_movies, _ = recommend_from_similar_users(seed_title, top_n=k)
+        recommended_ids = top_movies["movieId"].to_list()
+    elif method == "popular":
+        top_movies = recommend_popular_movies(seed_title, top_n=k)
+
+        if top_movies is None:
+            return []
+
         recommended_ids = top_movies["movieId"].to_list()
     else:
         return []
@@ -202,7 +210,7 @@ if __name__ == "__main__":
     user_ids = random.sample(range(1, 611), 100)
     k_values = [5, 10, 20]
     num_trials = 50
-    methods = ["content", "collaborative"]
+    methods = ["content", "collaborative", "popular"]
 
     print(f"Users evaluated: {len(user_ids)}")
     print(f"Trials per user: {num_trials}")

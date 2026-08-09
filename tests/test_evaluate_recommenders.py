@@ -78,6 +78,7 @@ def test_get_recommendation_ids_content():
     recommended_ids = get_recommendation_ids(seed_title, method, k)
 
     assert isinstance(recommended_ids, list)
+    assert len(recommended_ids) == 5
 
 def test_get_recommendation_ids_collaborative():
     seed_title = "Toy Story (1995)"
@@ -87,6 +88,18 @@ def test_get_recommendation_ids_collaborative():
     recommended_ids = get_recommendation_ids(seed_title, method, k)
 
     assert isinstance(recommended_ids, list) 
+    assert len(recommended_ids) == 5
+
+def test_get_recommendation_ids_popular():
+    seed_title = "Toy Story (1995)"
+    method = "popular"
+    k = 5
+
+    recommended_ids = get_recommendation_ids(seed_title, method, k)
+
+    assert isinstance(recommended_ids, list)
+    assert len(recommended_ids) == 5
+
 
 def test_get_recommendation_ids_invalid_method():
     seed_title = "Toy Story (1995)"
@@ -120,5 +133,3 @@ def test_build_results_table_expected_columns():
     assert expected_set.issubset(results_set)
     assert not results_df.empty
     assert len(results_df) == len(methods) * len(k_values)
-
-    
