@@ -117,13 +117,16 @@ hit rate@5 = 1
 
 ## Comparing Recommenders
 
-The evaluation now uses the same setup to compare content-based filtering and collaborative filtering.
+The evaluation now uses the same setup to compare content-based filtering, collaborative filtering, and a popular baseline.
 
 Content-based:
 Uses one seed movie title and recommends movies with similar genres.
 
 Collaborative:
 Uses one seed movie title, finds users who liked that movie, then recommends other movies those users liked.
+
+Popular baseline:
+Recommends movies with the most high ratings (>= `4.0`), excluding the seed movie.
 
 ## Initial Comparison Result
 
@@ -184,6 +187,22 @@ After normalizing the collaborative score, collaborative filtering still perform
 ## Comparison Results with Minimum Support Filter
 
 With the minimum support filter, stricter thresholds reduced low-support candidate movies, but lowered the metrics in evaluation. With minimum similar-user likes values of 2, 5, and 10, the metrics worsened as the value became stricter. The project will use the lighter default of 2 because it had better retrieval performance in this experiment.
+
+## Popular Baseline Comparison
+
+I added a popular baseline recommender that recommends movies with the most high ratings (>= `4.0`) globally, excluding the seed movie. This baseline doesn't use genres or similar-user behavior like the other recommenders.
+
+In the latest 100-user evaluation with 50 trials per user, collaborative filtering performed best, the popular baseline placed second, and content-based filtering came third based on hidden-movie recovery, including Hit Rate@20.
+
+Example Hit Rate@20:
+
+```text
+Content-based: 0.0494
+Popular baseline: 0.1120
+Collaborative filtering: 0.1834
+```
+
+This shows that collaborative filtering is learning more than general movie popularity in this setup. It also shows that content-based recommendations may be better for finding movies similar to others, but they are less effective for recovering hidden movies that users liked.
 
 ## Next Direction
 
