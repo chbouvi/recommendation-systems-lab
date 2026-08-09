@@ -3,6 +3,7 @@ import streamlit as st
 import plotly.express as px
 from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
+from popular_baseline import recommend_popular_movies
 
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
@@ -68,6 +69,8 @@ if best_method == "collaborative":
     best_method = "Collaborative filtering"
 elif best_method == "content":
     best_method = "Content-based"
+elif best_method == "popular":
+    best_method = "Popular baseline"
 
 highest_hit_rate = outputs_df.groupby("k")["hit_rate"].max()
 best_hit_rate = highest_hit_rate[20]
@@ -127,7 +130,11 @@ top_movies_collaborative, _ = recommend_from_similar_users(seed_title)
 top_movies_collaborative = top_movies_collaborative[["title"]]
 top_movies_collaborative.columns = ["Movie Title"]
 
-col1, col2 = st.columns(2)
+top_popular_movies = recommend_popular_movies(seed_title)
+top_popular_movies = top_popular_movies[["title"]]
+top_popular_movies.columns = ["Movie Title"]
+
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.caption("Content-based")
@@ -138,3 +145,6 @@ with col2:
         st.info("Not enough similar-user data for this movie. Try a more popular seed movie.")
     else:
         st.dataframe(top_movies_collaborative, hide_index=True)
+with col3:
+    st.caption("Popular baseline")
+    st.dataframe(top_popular_movies, hide_index=True)
