@@ -35,12 +35,12 @@ def get_recommendation_ids(seed_title, method, k):
     
     return recommended_ids
 
-def split_relevant_movies(relevant_movie_ids):
+def split_relevant_movies(relevant_movie_ids, rng):
     if not relevant_movie_ids:
         return [], []
     
     training_ids = relevant_movie_ids.copy()  
-    hidden_ids = [random.choice(relevant_movie_ids)]
+    hidden_ids = [rng.choice(relevant_movie_ids)]
     training_ids.remove(hidden_ids[0])
 
     return training_ids, hidden_ids
@@ -52,7 +52,7 @@ def get_movie_title(movie_id):
 
     return movie_title
 
-def run_evaluation(user_id, method, k, num_trials):
+def run_evaluation(user_id, method, k, num_trials, rng):
     precision_scores = []
     recall_scores = []
     hit_rate_scores = []
@@ -60,12 +60,12 @@ def run_evaluation(user_id, method, k, num_trials):
 
     for _ in range(num_trials):
         relevant_ids = get_relevant_movies_for_user(user_id)
-        training_ids, hidden_ids = split_relevant_movies(relevant_ids)
+        training_ids, hidden_ids = split_relevant_movies(relevant_ids, rng)
 
         if not training_ids:
             continue
 
-        seed_movie = random.choice(training_ids)
+        seed_movie = rng.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
 
         recommended_ids = get_recommendation_ids(seed_title, method, k)
@@ -85,7 +85,7 @@ def run_evaluation(user_id, method, k, num_trials):
     return average_precision_score, average_recall_score, average_hit_rate_score, completed_trials
 
 
-def run_evaluation_for_k_values(user_id, method, k_values, num_trials):
+def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
     scores = {}
 
     for k in k_values:
@@ -99,12 +99,12 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials):
 
     for _ in range(num_trials):
         relevant_ids = get_relevant_movies_for_user(user_id)
-        training_ids, hidden_ids = split_relevant_movies(relevant_ids)
+        training_ids, hidden_ids = split_relevant_movies(relevant_ids, rng)
 
         if not training_ids:
             continue
 
-        seed_movie = random.choice(training_ids)
+        seed_movie = rng.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
 
         recommended_ids = get_recommendation_ids(seed_title, method, max(k_values))
@@ -139,11 +139,11 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials):
     
     return average_scores, completed_trials
 
-def run_evaluation_for_users(user_ids, method, k_values, num_trials):
+def run_evaluation_for_users(user_ids, method, k_values, num_trials, rng):
     results = {k : {} for k in k_values}
 
     for user in user_ids:
-        average_scores, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials)
+        average_scores, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials, rng)
 
         if completed_trials == 0:
             continue
@@ -185,11 +185,13 @@ def average_metric_scores(scores):
     
     return sum(scores) / len(scores)
 
-def build_results_table(methods, user_ids, k_values, num_trials):
+def build_results_table(methods, user_ids, k_values, num_trials, seed):
     results_table = []
 
     for method in methods:
-        average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
+        # Use a separate seed since trial choices should be reproducible but independent from the user sampling
+        method_rng = random.Random(seed + 1)
+        average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials, method_rng)
 
         for k in average_scores_by_k:
             results_table.append({
@@ -207,7 +209,10 @@ def build_results_table(methods, user_ids, k_values, num_trials):
     return results_df
   
 if __name__ == "__main__":
-    user_ids = random.sample(range(1, 611), 100)
+    seed = 42
+    user_rng = random.Random(seed)
+
+    user_ids = user_rng.sample(range(1, 611), 100)
     k_values = [5, 10, 20]
     num_trials = 50
     methods = ["content", "collaborative", "popular"]
@@ -217,7 +222,7 @@ if __name__ == "__main__":
     print(f"K values: {k_values}")
     print()
 
-    results_df = build_results_table(methods, user_ids, k_values, num_trials)
+    results_df = build_results_table(methods, user_ids, k_values, num_trials, seed)
 
     results_df.to_csv("outputs/evaluation_summary.csv", index=False)
 

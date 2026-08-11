@@ -1,3 +1,4 @@
+import random
 from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users, build_results_table
 
 def test_get_relevant_movies_for_user_valid():
@@ -15,9 +16,10 @@ def test_get_relevant_movies_for_user_invalid():
     assert result == []
 
 def test_split_relevant_movies_valid():
+    rng = random.Random(42)
     relevant_movie_ids = [5, 10, 15, 20]
 
-    training_ids, hidden_ids = split_relevant_movies(relevant_movie_ids)
+    training_ids, hidden_ids = split_relevant_movies(relevant_movie_ids, rng)
 
     assert len(training_ids) == 3
     assert len(hidden_ids) == 1
@@ -25,18 +27,20 @@ def test_split_relevant_movies_valid():
     assert len(training_ids) + len(hidden_ids) == len(relevant_movie_ids)
 
 def test_split_relevant_movies_empty():
-    training_ids, hidden_ids = split_relevant_movies([])
+    rng = random.Random(42)
+    training_ids, hidden_ids = split_relevant_movies([], rng)
 
     assert not training_ids
     assert not hidden_ids
 
 def test_run_evaluation_for_k_values():
+    rng = random.Random(42)
     user_id = 1
     k_values = [5, 10, 20]
     num_trials = 5
     method = "content"
 
-    average_scores, completed_trials = run_evaluation_for_k_values(user_id, method, k_values, num_trials)
+    average_scores, completed_trials = run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng)
 
     assert completed_trials > 0
     assert 5 in average_scores
@@ -52,12 +56,13 @@ def test_run_evaluation_for_k_values():
         assert (average_scores[k]["hit_rate"] >= 0) and (average_scores[k]["hit_rate"] <= 1)
 
 def test_run_evaluation_for_users():
+    rng = random.Random(42)
     user_ids = [1, 2]
     k_values = [5, 10]
     num_trials = 5
     method = "content"
 
-    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials)
+    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials, rng)
 
     assert 5 in average_scores_by_k 
     assert 10 in average_scores_by_k
@@ -116,7 +121,7 @@ def test_build_results_table_expected_columns():
     k_values = [5, 10]
     num_trials = 5
 
-    results_df = build_results_table(methods, user_ids, k_values, num_trials) 
+    results_df = build_results_table(methods, user_ids, k_values, num_trials, seed=42)
 
     expected_set = {
         "method",
