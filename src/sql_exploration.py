@@ -30,13 +30,29 @@ ORDER BY average_rating DESC
 LIMIT 10;
 """
 
+query_highly_rated_genres = """
+SELECT genres, COUNT(genres) as genre_count
+FROM movies
+INNER JOIN ratings
+    ON movies.movieId = ratings.movieId
+WHERE ratings.rating >= 4.0
+GROUP BY genres
+ORDER BY genre_count DESC
+LIMIT 10;
+"""
+
 most_rated_result = pd.read_sql_query(query_most_rated, connection)
 highest_average_result = pd.read_sql_query(query_highest_average, connection)
+highly_rated_genres_result = pd.read_sql_query(query_highly_rated_genres, connection)
 
 print(most_rated_result)
 
 print()
 
 print(highest_average_result)
+
+print()
+
+print(highly_rated_genres_result)
 
 connection.close()
