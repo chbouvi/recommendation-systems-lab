@@ -45,14 +45,17 @@ most_rated_result = pd.read_sql_query(query_most_rated, connection)
 highest_average_result = pd.read_sql_query(query_highest_average, connection)
 highly_rated_genres_result = pd.read_sql_query(query_highly_rated_genres, connection)
 
+print("Top 10 most-rated movies")
 print(most_rated_result)
 
-print()
+print("-" * 60)
 
+print("Top 10 highest-average-rated movies with at least 20 ratings")
 print(highest_average_result)
 
-print()
+print("-" * 60)
 
+print("Most common highly rated genre strings")
 print(highly_rated_genres_result)
 
 connection.close()
