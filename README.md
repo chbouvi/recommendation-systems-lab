@@ -54,6 +54,17 @@ The evaluation script also saves a summary CSV with each recommender method, K v
 
 The latest evaluation compares content-based filtering, collaborative filtering, and the popular baseline. Collaborative filtering performed best on hidden-movie recovery, the popular baseline placed second, and content-based filtering placed third. This suggests that collaborative filtering is learning useful user-behavior patterns beyond simple movie popularity, while content-based filtering remains helpful for recommendations similar to the seed movie.
 
+## SQL Exploration
+
+I added a small SQLite exploration script to practice SQL directly on the MovieLens dataset used in this project. The script loads the `movies.csv` and `ratings.csv` files into in-memory SQLite tables and runs queries to answer some basic questions.
+
+Current questions done:
+- What are the top 10 most-rated movies?
+- What are the top 10 highest-average-rated movies with at least 20 ratings?
+- What genre strings appear most often among highly-rated movies?
+
+This helped connect SQL concepts like `JOIN`, `GROUP BY`, `COUNT`, `AVG`, `HAVING`, and `ORDER BY` to the dataset. One current limitation is that MovieLens stores genres as combined strings like `Action|Adventure|Sci-Fi`, so the current genre query counts full genre strings rather than individual genres.
+
 ## Testing
 
 The project uses pytest for automated tests. Tests live in the `tests/` folder, separate from the recommender code in `src/`.
