@@ -41,9 +41,18 @@ ORDER BY genre_count DESC
 LIMIT 10;
 """
 
+query_most_active_users = """
+SELECT userId, COUNT(rating) as rating_count
+FROM ratings
+GROUP BY userId
+ORDER BY rating_count DESC
+LIMIT 10;
+"""
+
 most_rated_result = pd.read_sql_query(query_most_rated, connection)
 highest_average_result = pd.read_sql_query(query_highest_average, connection)
 highly_rated_genres_result = pd.read_sql_query(query_highly_rated_genres, connection)
+most_active_users_result = pd.read_sql_query(query_most_active_users, connection)
 
 print("Top 10 most-rated movies")
 print(most_rated_result)
@@ -57,5 +66,10 @@ print("-" * 60)
 
 print("Most common highly rated genre strings")
 print(highly_rated_genres_result)
+
+print("-" * 60)
+
+print("Top 10 most active users")
+print(most_active_users_result)
 
 connection.close()
