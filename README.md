@@ -61,9 +61,10 @@ I added a small SQLite exploration script to practice SQL directly on the MovieL
 Current questions done:
 - What are the top 10 most-rated movies?
 - What are the top 10 highest-average-rated movies with at least 20 ratings?
-- What genre strings appear most often among highly-rated movies?
+- What genres appear most often among highly-rated movies?
+- What are the top 10 users by number of ratings?
 
-This helped connect SQL concepts like `JOIN`, `GROUP BY`, `COUNT`, `AVG`, `HAVING`, and `ORDER BY` to the dataset. One current limitation is that MovieLens stores genres as combined strings like `Action|Adventure|Sci-Fi`, so the current genre query counts full genre strings rather than individual genres.
+This helped connect SQL concepts like `JOIN`, `GROUP BY`, `COUNT`, `AVG`, `HAVING`, and `ORDER BY` to the dataset. Originally, a limitation I had was counting full genre strings rather than individual genres. To fix this, I added a new table by splitting the genre strings into individual genre rows. Now, the genre query counts individual genres among highly rated movies.
 
 ## Testing
 
