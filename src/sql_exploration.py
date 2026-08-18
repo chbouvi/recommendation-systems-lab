@@ -4,9 +4,15 @@ import pandas as pd
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
+df_movie_genres = df_movies[["movieId", "genres"]].copy()
+df_movie_genres["genres"] = df_movie_genres["genres"].str.split("|")
+df_movie_genres = df_movie_genres.explode("genres")
+df_movie_genres.columns = ["movieId", "genre"]
+
 connection = sqlite3.connect(":memory:")
 
 df_movies.to_sql("movies", connection, index=False, if_exists="replace")
+df_movie_genres.to_sql("movie_genres", connection, index=False, if_exists="replace")
 df_ratings.to_sql("ratings", connection, index=False, if_exists="replace")
 
 query_most_rated = """
@@ -31,12 +37,12 @@ LIMIT 10;
 """
 
 query_highly_rated_genres = """
-SELECT genres, COUNT(genres) as genre_count
-FROM movies
+SELECT genre, COUNT(genre) as genre_count
+FROM movie_genres
 INNER JOIN ratings
-    ON movies.movieId = ratings.movieId
+    ON movie_genres.movieId = ratings.movieId
 WHERE ratings.rating >= 4.0
-GROUP BY genres
+GROUP BY genre
 ORDER BY genre_count DESC
 LIMIT 10;
 """
@@ -64,7 +70,7 @@ print(highest_average_result)
 
 print("-" * 60)
 
-print("Most common highly rated genre strings")
+print("Most common highly rated genres")
 print(highly_rated_genres_result)
 
 print("-" * 60)
