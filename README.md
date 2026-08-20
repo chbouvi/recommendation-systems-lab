@@ -21,7 +21,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added normalized collaborative scoring using the ratio of similar users who liked each movie and the average rating
 - Added evaluation summaries saved as CSV
 - Added a Streamlit dashboard for viewing evaluation outputs, summary metrics, and metric comparisons
-- Added interactive dashboard examples for comparing content-based and collaborative recommendations from a selected seed movie
+- Added interactive dashboard examples for comparing content-based, collaborative, and popular baseline recommendations from a selected seed movie
 - Filtered dashboard seed movie choices to movies with enough high ratings for collaborative filtering
 - Added a popular baseline recommender based on movies rated highest globally
 - Compared content-based filtering, collaborative filtering, and the popular baseline in evaluation
@@ -64,7 +64,7 @@ Current questions done:
 - What genres appear most often among highly-rated movies?
 - What are the top 10 users by number of ratings?
 
-This helped connect SQL concepts like `JOIN`, `GROUP BY`, `COUNT`, `AVG`, `HAVING`, and `ORDER BY` to the dataset. Originally, a limitation I had was counting full genre strings rather than individual genres. To fix this, I added a new table by splitting the genre strings into individual genre rows. Now, the genre query counts individual genres among highly rated movies.
+This helped connect SQL concepts like `JOIN`, `GROUP BY`, `COUNT`, `AVG`, `HAVING`, and `ORDER BY` to the dataset.
 
 ## Testing
 
