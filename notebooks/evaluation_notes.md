@@ -204,6 +204,10 @@ Collaborative filtering: 0.1834
 
 This shows that collaborative filtering is learning more than general movie popularity in this setup. It also shows that content-based recommendations may be better for finding movies similar to others, but they are less effective for recovering hidden movies that users liked.
 
+## Dashboard Interpretation
+
+The dashboard now includes a method legend and chart caption so the evaluation results are easier to interpret. The main comparison is between the recommender methods (content-based and collaborative filtering) and the popular baseline. If a recommender beats the popular baseline, that suggests it is adding value beyond simply recommending generally popular movies.
+
 ## Next Direction
 
 - Explain the method comparison results more clearly.
