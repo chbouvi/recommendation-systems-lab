@@ -43,7 +43,6 @@ select_metric = st.sidebar.selectbox(
     metrics_list
 )
 
-
 select_metric = select_metric.strip()
 
 if select_metric == "Precision":
@@ -61,6 +60,7 @@ else:
 st.subheader("Evaluation Results")
 st.dataframe(outputs_df, hide_index=True)
 st.caption("Results are averaged across 100 users and 50 trials per user.")
+st.caption("Methods: content = content-based filtering, collaborative = collaborative filtering, popular = popular baseline.")
 
 highest_metric_by_method = outputs_df.groupby("method")[final_metric].max()
 best_method = highest_metric_by_method.idxmax()
@@ -111,7 +111,7 @@ fig1.update_layout(
 
 st.subheader("Metric Comparison")
 st.plotly_chart(fig1, width="stretch")
-st.caption(f"{best_method} has higher {select_metric}@K in this run.")
+st.caption(f"{best_method} performs best for {select_metric}@K in this evaluation. Compare it with the popular baseline to see whether other methods add value beyond popularity.")
 
 st.subheader("Example Recommendations")
 
