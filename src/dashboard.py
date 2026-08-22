@@ -26,6 +26,15 @@ def get_valid_seed_movie_titles(df_movies, df_ratings, min_rating=4.0, min_ratin
 
     return valid_movies["title"].to_list()
 
+def get_method_display_name(method):
+    method_names = {
+        "content": "Content-based filtering",
+        "collaborative": "Collaborative filtering",
+        "popular": "Popular baseline"
+    }
+
+    return method_names.get(method, method)
+
 st.title("Recommendation Systems Lab")
 
 st.sidebar.header("Choose Metric")
@@ -65,12 +74,7 @@ st.caption("Methods: content = content-based filtering, collaborative = collabor
 highest_metric_by_method = outputs_df.groupby("method")[final_metric].max()
 best_method = highest_metric_by_method.idxmax()
 
-if best_method == "collaborative":
-    best_method = "Collaborative filtering"
-elif best_method == "content":
-    best_method = "Content-based"
-elif best_method == "popular":
-    best_method = "Popular baseline"
+best_method = get_method_display_name(best_method)
 
 highest_hit_rate = outputs_df.groupby("k")["hit_rate"].max()
 best_hit_rate = highest_hit_rate[20]
