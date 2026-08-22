@@ -1,5 +1,5 @@
 import pandas as pd
-from dashboard import get_valid_seed_movie_titles
+from dashboard import get_valid_seed_movie_titles, get_method_display_name
 
 fake_df_movies = pd.DataFrame({
     "movieId": [1, 2, 3],
@@ -35,3 +35,17 @@ def test_valid_seed_movie_titles_lower_min_rating_count():
     movie_titles = get_valid_seed_movie_titles(fake_df_movies, fake_df_ratings, min_rating_count=9)
 
     assert movie_titles == ["A", "B"]
+
+def test_get_valid_method_display_name_known_method():
+    method = "content"
+
+    best_method = get_method_display_name(method)
+
+    assert best_method == "Content-based filtering"
+
+def test_get_method_display_name_unknown_method():
+    method = "other"
+
+    best_method = get_method_display_name(method)
+
+    assert best_method == "other"
