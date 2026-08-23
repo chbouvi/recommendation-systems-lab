@@ -35,6 +35,25 @@ def get_method_display_name(method):
 
     return method_names.get(method, method)
 
+def get_metric_winners(outputs_df):
+    metric_columns = ["precision", "recall", "hit_rate"]
+    winners = []
+
+    for k_value in sorted(outputs_df["k"].unique()):
+        k_results = outputs_df[outputs_df["k"] == k_value]
+
+        for metric in metric_columns:
+            best_row = k_results.loc[k_results[metric].idxmax()]
+
+            winners.append({
+                "k": k_value,
+                "metric": metric,
+                "best_method": get_method_display_name(best_row["method"]),
+                "best_value": best_row[metric],
+            })
+
+    return pd.DataFrame(winners)
+
 st.title("Recommendation Systems Lab")
 
 st.sidebar.header("Choose Metric")
@@ -70,6 +89,9 @@ st.subheader("Evaluation Results")
 st.dataframe(outputs_df, hide_index=True)
 st.caption("Results are averaged across 100 users and 50 trials per user.")
 st.caption("Methods: content = content-based filtering, collaborative = collaborative filtering, popular = popular baseline.")
+
+st.subheader("Best Method by Metric")
+st.dataframe(get_metric_winners(outputs_df), hide_index=True)
 
 highest_metric_by_method = outputs_df.groupby("method")[final_metric].max()
 best_method = highest_metric_by_method.idxmax()
