@@ -194,7 +194,7 @@ I added a popular baseline recommender that recommends movies with the most high
 
 In the latest 100-user evaluation with 50 trials per user, collaborative filtering performed best, the popular baseline placed second, and content-based filtering came third based on hidden-movie recovery, including Hit Rate@20.
 
-Example Hit Rate@20:
+Example Hit Rate@20 from an evaluation run:
 
 ```text
 Content-based: 0.0494
@@ -207,6 +207,8 @@ This shows that collaborative filtering is learning more than general movie popu
 ## Dashboard Interpretation
 
 The dashboard now includes a method legend and chart caption so the evaluation results are easier to interpret. The main comparison is between the recommender methods (content-based and collaborative filtering) and the popular baseline. If a recommender beats the popular baseline, that suggests it is adding value beyond simply recommending generally popular movies.
+
+The dashboard also includes a best method by metric summary table that finds the winning recommender for each metric and K value.
 
 ## Next Direction
 
