@@ -54,6 +54,49 @@ def get_metric_winners(outputs_df):
 
     return pd.DataFrame(winners)
 
+def get_dashboard_interpretation(outputs_df):
+    k20_results = outputs_df[outputs_df["k"] == 20]
+
+    best_hit_rate_row = k20_results.loc[k20_results["hit_rate"].idxmax()]
+    best_method = get_method_display_name(best_hit_rate_row["method"])
+    best_hit_rate = best_hit_rate_row["hit_rate"]
+
+    popular_hit_rate = k20_results[
+        k20_results["method"] == "popular"
+    ]["hit_rate"].iloc[0]
+
+    content_hit_rate = k20_results[
+        k20_results["method"] == "content"
+    ]["hit_rate"].iloc[0]
+
+    collaborative_hit_rate = k20_results[
+        k20_results["method"] == "collaborative"
+    ]["hit_rate"].iloc[0]
+
+    interpretation = [
+        f"{best_method} has the best Hit Rate@20 at {best_hit_rate:.4f}."
+    ]
+
+    if collaborative_hit_rate > popular_hit_rate:
+        interpretation.append(
+            "Collaborative filtering beats the popular baseline at Hit Rate@20, which suggests it adds value beyond general popularity."
+        )
+    else:
+        interpretation.append(
+            "The popular baseline matches or beats collaborative filtering at Hit Rate@20, which suggests general popularity is difficult to outperform in this setup."
+        )
+
+    if content_hit_rate > popular_hit_rate:
+        interpretation.append(
+            "Content-based filtering beats the popular baseline at Hit Rate@20, which suggests genre similarity helps recover hidden liked movies."
+        )
+    else:
+        interpretation.append(
+            "Content-based filtering trails the popular baseline in hidden-movie recovery, but it still supports similarity-based recommendations."
+        )
+
+    return interpretation
+
 st.title("Recommendation Systems Lab")
 
 st.sidebar.header("Choose Metric")
@@ -90,8 +133,19 @@ st.dataframe(outputs_df, hide_index=True)
 st.caption("Results are averaged across 100 users and 50 trials per user.")
 st.caption("Methods: content = content-based filtering, collaborative = collaborative filtering, popular = popular baseline.")
 
+st.divider()
+
 st.subheader("Best Method by Metric")
 st.dataframe(get_metric_winners(outputs_df), hide_index=True)
+
+st.divider()
+
+st.subheader("Evaluation Interpretation")
+
+for sentence in get_dashboard_interpretation(outputs_df):
+    st.markdown(f"- {sentence}")
+
+st.divider()
 
 highest_metric_by_method = outputs_df.groupby("method")[final_metric].max()
 best_method = highest_metric_by_method.idxmax()
@@ -117,6 +171,7 @@ with col3:
 with col4:
     st.metric("Best Hit Rate@20", best_hit_rate)
 
+st.divider()
 
 outputs_df["k_label"] = outputs_df["k"].astype(str)
 
@@ -138,6 +193,8 @@ fig1.update_layout(
 st.subheader("Metric Comparison")
 st.plotly_chart(fig1, width="stretch")
 st.caption(f"{best_method} performs best for {select_metric}@K in this evaluation. Compare it with the popular baseline to see whether other methods add value beyond popularity.")
+
+st.divider()
 
 st.subheader("Example Recommendations")
 
