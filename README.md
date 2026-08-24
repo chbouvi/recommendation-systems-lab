@@ -26,6 +26,7 @@ A recommendation lab that explains why items are recommended, compares content-b
 - Added a popular baseline recommender based on movies rated highest globally
 - Compared content-based filtering, collaborative filtering, and the popular baseline in evaluation
 - Added a best-method-by-metric summary table to dashboard
+- Added a dashboard evaluation interpretation section
 
 ## How It Works
 
@@ -81,7 +82,7 @@ Current tests check that recommenders handle valid and invalid inputs, return ex
 
 ## Dashboard
 
-The dashboard displays evaluation results, a best-method-by-metric summary table, summary metrics, metric comparison charts, and example recommendations for a selected seed movie.
+The dashboard displays evaluation results, a best-method-by-metric summary table, an evaluation interpretation, summary metrics, metric comparison charts, and example recommendations for a selected seed movie.
 
 Run the Streamlit dashboard with:
 
