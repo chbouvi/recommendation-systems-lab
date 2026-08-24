@@ -1,5 +1,5 @@
 import pandas as pd
-from dashboard import get_valid_seed_movie_titles, get_method_display_name, get_metric_winners
+from dashboard import get_valid_seed_movie_titles, get_method_display_name, get_metric_winners, get_dashboard_interpretation
 
 fake_df_movies = pd.DataFrame({
     "movieId": [1, 2, 3],
@@ -93,3 +93,30 @@ def test_get_metric_winners():
     assert hit_rate_k10["best_method"] == "Collaborative filtering"
 
     assert hit_rate_k10["best_value"] == 0.1
+
+def test_get_dashboard_interpretation():
+    sample_data = {
+        "method": ["content", "collaborative", "popular", "content", "collaborative", "popular", "content", "collaborative", "popular"],
+        "k": [5, 5, 5, 10, 10, 10, 20, 20, 20],
+        "precision": [0.005, 0.1, 0.04, 0.06, 0.3, 0.08, 0.1, 0.2, 0.05],
+        "recall": [0.005, 0.04, 0.1, 0.006, 0.01, 0.03, 0.2, 0.03, 0.09],
+        "hit_rate": [0.04, 0.08, 0.006, 0.1, 0.04, 0.5, 0.1, 0.24, 0.15],
+        "num_users": [100, 100, 100, 100, 100, 100, 100, 100, 100],
+        "trials_per_user": [50, 50, 50, 50, 50, 50, 50, 50, 50]
+    }
+
+    sample_df = pd.DataFrame(sample_data)
+
+    interpretation = get_dashboard_interpretation(sample_df)
+
+    assert isinstance(interpretation, list)
+
+    assert len(interpretation) > 0
+
+    assert isinstance(interpretation[0], str)
+
+    assert interpretation[0] == "Collaborative filtering has the best Hit Rate@20 at 0.2400."
+
+    assert "Collaborative filtering beats the popular baseline" in interpretation[1]
+
+    assert "Content-based filtering trails the popular baseline" in interpretation[2]
