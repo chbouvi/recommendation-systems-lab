@@ -16,15 +16,18 @@ def get_relevant_movies_for_user(user_id, min_rating=4.0):
 
     return ratings_for_user["movieId"].to_list()
 
-def get_recommendation_ids(seed_title, method, k):
+def get_recommendation_ids(seed_title, method, k, ratings_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+
     if method == "content":
-        recommendations = recommend_similar_movies(seed_title, top_n=k)
+        recommendations = recommend_similar_movies(seed_title, top_n=k, ratings_df=ratings_df)
         recommended_ids = recommendations["movieId"].to_list()
     elif method == "collaborative":
-        top_movies, _ = recommend_from_similar_users(seed_title, top_n=k)
+        top_movies, _ = recommend_from_similar_users(seed_title, top_n=k, ratings_df=ratings_df)
         recommended_ids = top_movies["movieId"].to_list()
     elif method == "popular":
-        top_movies = recommend_popular_movies(seed_title, top_n=k)
+        top_movies = recommend_popular_movies(seed_title, top_n=k, ratings_df=ratings_df)
 
         if top_movies is None:
             return []
@@ -104,10 +107,17 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
         if not training_ids:
             continue
 
+        training_ratings_df = df_ratings[
+            ~(
+                (df_ratings["userId"] == user_id) &
+                (df_ratings["movieId"].isin(hidden_ids))
+            )
+        ]
+        
         seed_movie = rng.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
 
-        recommended_ids = get_recommendation_ids(seed_title, method, max(k_values))
+        recommended_ids = get_recommendation_ids(seed_title, method, max(k_values), training_ratings_df)
 
         for k in k_values:
             precision = precision_at_k(recommended_ids, hidden_ids, k)
