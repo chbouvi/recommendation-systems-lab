@@ -7,31 +7,41 @@ pd.set_option("display.max_colwidth", None)
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 
-def find_users_who_like_movie(movie_title, min_rating):
-    movie_row = df_movies[df_movies["title"] == movie_title]
+def find_users_who_like_movie(movie_title, min_rating, ratings_df=None, movies_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+    if movies_df is None:
+        movies_df = df_movies
+
+    movie_row = movies_df[movies_df["title"] == movie_title]
 
     if movie_row.empty:
         return None, None
     
     movie_id = movie_row["movieId"].iloc[0]
 
-    liked_ratings = df_ratings[
-        (df_ratings["movieId"] == movie_id) &
-        (df_ratings["rating"] >= min_rating)
+    liked_ratings = ratings_df[
+        (ratings_df["movieId"] == movie_id) &
+        (ratings_df["rating"] >= min_rating)
     ]
 
     return liked_ratings["userId"].unique(), movie_id
 
-def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10, min_similar_user_likes=2):
-    users, movie_id = find_users_who_like_movie(movie_title, min_rating)
+def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10, min_similar_user_likes=2, ratings_df=None, movies_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+    if movies_df is None:
+        movies_df = df_movies
+
+    users, movie_id = find_users_who_like_movie(movie_title, min_rating, ratings_df, movies_df)
 
     if users is None:
         return None, None
 
-    similar_user_ratings = df_ratings[
-        (df_ratings["userId"].isin(users)) &
-        (df_ratings["rating"] >= min_rating) & 
-        (df_ratings["movieId"] != movie_id)
+    similar_user_ratings = ratings_df[
+        (ratings_df["userId"].isin(users)) &
+        (ratings_df["rating"] >= min_rating) & 
+        (ratings_df["movieId"] != movie_id)
     ]
 
     movie_stats = (
@@ -56,7 +66,7 @@ def recommend_from_similar_users(movie_title, min_rating=4.0, top_n=10, min_simi
     top_movie_stats = movie_stats.head(top_n)
 
     top_movies = top_movie_stats.merge(
-        df_movies[["movieId", "title", "genres"]],
+        movies_df[["movieId", "title", "genres"]],
         on="movieId",
         how="left"
     )

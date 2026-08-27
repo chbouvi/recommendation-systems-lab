@@ -7,16 +7,21 @@ pd.set_option("display.max_colwidth", None)
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
-rating_stats = (
-    df_ratings.groupby("movieId")["rating"]
-    .agg(["mean", "count"])
-    .reset_index()
-)
+def recommend_similar_movies(movie_title, top_n=10, ratings_df=None, movies_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+    if movies_df is None:
+        movies_df = df_movies
 
-rating_stats.columns = ["movieId", "average_rating", "rating_count"]
+    rating_stats = (
+        ratings_df.groupby("movieId")["rating"]
+        .agg(["mean", "count"])
+        .reset_index()
+    )
 
-def recommend_similar_movies(movie_title, top_n=10):
-    movie_row = df_movies[df_movies["title"] == movie_title]
+    rating_stats.columns = ["movieId", "average_rating", "rating_count"]
+
+    movie_row = movies_df[movies_df["title"] == movie_title]
 
     if movie_row.empty:
         print("Movie not found.")
@@ -24,13 +29,13 @@ def recommend_similar_movies(movie_title, top_n=10):
     
     movie_index = movie_row.index[0]
     
-    genre_matrix = df_movies["genres"].str.get_dummies(sep="|")
+    genre_matrix = movies_df["genres"].str.get_dummies(sep="|")
 
     selected_movie = genre_matrix.loc[movie_index]
 
     similarity_scores = genre_matrix.dot(selected_movie)
 
-    similarity_results = df_movies[["movieId", "title", "genres"]].copy()
+    similarity_results = movies_df[["movieId", "title", "genres"]].copy()
     similarity_results["similarity_score"] = similarity_scores
 
     similarity_results = similarity_results.merge(
@@ -40,10 +45,10 @@ def recommend_similar_movies(movie_title, top_n=10):
     )
 
     similarity_results = similarity_results[
-        similarity_results["title"] != df_movies.loc[movie_index, "title"]
+        similarity_results["title"] != movies_df.loc[movie_index, "title"]
     ]
 
-    selected_genres = df_movies.loc[movie_index, "genres"]
+    selected_genres = movies_df.loc[movie_index, "genres"]
     selected_genres = set(selected_genres.split("|"))
 
     def get_shared_genres(recommended_genres):

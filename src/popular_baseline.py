@@ -3,17 +3,22 @@ import pandas as pd
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
-def recommend_popular_movies(seed_title, min_rating=4.0, top_n=10):
-    movie_row = df_movies[df_movies["title"] == seed_title]
+def recommend_popular_movies(seed_title, min_rating=4.0, top_n=10, ratings_df=None, movies_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+    if movies_df is None:
+        movies_df = df_movies
+    
+    movie_row = movies_df[movies_df["title"] == seed_title]
 
     if movie_row.empty:
         return None
 
     movie_id = movie_row["movieId"].iloc[0]
 
-    top_rated = df_ratings[
-        (df_ratings["rating"] >= min_rating) &
-        (df_ratings["movieId"] != movie_id)
+    top_rated = ratings_df[
+        (ratings_df["rating"] >= min_rating) &
+        (ratings_df["movieId"] != movie_id)
     ]
 
     top_movies = (
@@ -25,7 +30,7 @@ def recommend_popular_movies(seed_title, min_rating=4.0, top_n=10):
     top_movies.columns = ["movieId", "high_rating_count", "average_rating"]
 
     top_movies = top_movies.merge(
-        df_movies[["movieId", "title", "genres"]],
+        movies_df[["movieId", "title", "genres"]],
         on="movieId",
         how="left"
     )
