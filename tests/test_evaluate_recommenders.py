@@ -1,5 +1,6 @@
 import random
-from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, run_evaluation_for_users, build_results_table
+import pandas as pd
+from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, remove_hidden_ratings, run_evaluation_for_users, build_results_table
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -138,3 +139,29 @@ def test_build_results_table_expected_columns():
     assert expected_set.issubset(results_set)
     assert not results_df.empty
     assert len(results_df) == len(methods) * len(k_values)
+
+def test_remove_hidden_ratings():
+    ratings_df = pd.DataFrame({
+        "userId": [1, 1, 2, 2],
+        "movieId": [10, 20, 20, 30],
+        "rating": [5.0, 4.5, 5.0, 3.0],
+    })
+
+    user_id = 1
+    hidden_ids = [20]
+
+    training_ratings_df = remove_hidden_ratings(ratings_df, user_id, hidden_ids)
+
+    assert len(training_ratings_df) == 3
+    assert not (
+        (training_ratings_df["userId"] == 1) &
+        (training_ratings_df["movieId"] == 20)
+    ).any()
+    assert (
+        (training_ratings_df["userId"] == 1) &
+        (training_ratings_df["movieId"] == 10)
+    ).any()
+    assert (
+        (training_ratings_df["userId"] == 2) &
+        (training_ratings_df["movieId"] == 20)
+    ).any()

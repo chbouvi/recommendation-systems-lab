@@ -1,3 +1,4 @@
+import pandas as pd
 from popular_baseline import recommend_popular_movies
 
 def test_valid_movie():
@@ -42,3 +43,23 @@ def test_top_n():
     result = recommend_popular_movies(movie_title, top_n=5)
 
     assert len(result) == 5
+
+def test_custom_dataframes_used_for_popular_recommendations():
+    movies_df = pd.DataFrame({
+        "movieId": [1, 2, 3],
+        "title": ["Seed Movie", "Popular Movie", "Other Movie"],
+        "genres": ["Action", "Action", "Comedy"],
+    })
+
+    ratings_df = pd.DataFrame({
+        "userId": [10, 10, 20, 20, 30],
+        "movieId": [1, 2, 1, 2, 3],
+        "rating": [5.0, 5.0, 5.0, 4.5, 5.0],
+    })
+
+    movie_title = "Seed Movie"
+
+    top_movies = recommend_popular_movies(movie_title, ratings_df=ratings_df, movies_df=movies_df)
+
+    assert top_movies["title"].iloc[0] == "Popular Movie"
+    assert "Seed Movie" not in top_movies["title"].values
