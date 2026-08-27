@@ -204,6 +204,12 @@ Collaborative filtering: 0.1834
 
 This shows that collaborative filtering is learning more than general movie popularity in this setup. It also shows that content-based recommendations may be better for finding movies similar to others, but they are less effective for recovering hidden movies that users liked.
 
+## Evaluation Data Leakage Fix
+
+The evaluation now removes the target user's hidden movie rating before generating recommendations. This prevents the recommender from using the answer it's being tested on.
+
+After this change, all methods had lower metrics, which suggests the previous evaluation had some data leakage. Collaborative filtering still achieved the best Hit Rate@20 and outperformed the popular baseline, so the main conclusion still holds under a stricter evaluation.
+
 ## Dashboard Interpretation
 
 The dashboard now includes a method legend and chart caption so the evaluation results are easier to interpret. The main comparison is between the recommender methods (content-based and collaborative filtering) and the popular baseline. If a recommender beats the popular baseline, that suggests it is adding value beyond simply recommending generally popular movies.

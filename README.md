@@ -56,6 +56,8 @@ The evaluation script also saves a summary CSV with each recommender method, K v
 
 The latest evaluation compares content-based filtering, collaborative filtering, and the popular baseline. Collaborative filtering performed best on hidden-movie recovery, the popular baseline placed second, and content-based filtering placed third. This suggests that collaborative filtering is learning useful user-behavior patterns beyond simple movie popularity, while content-based filtering remains helpful for recommendations similar to the seed movie.
 
+After updating the evaluation to remove each target user's hidden rating before generating recommendations, collaborative filtering still achieved the best Hit Rate@20 and outperformed the popularity baseline. This suggests the collaborative method captures useful user-behavior patterns beyond simply recommending globally popular movies.
+
 ## SQL Exploration
 
 I added a small SQLite exploration script to practice SQL directly on the MovieLens dataset used in this project. The script loads the `movies.csv` and `ratings.csv` files into in-memory SQLite tables and runs queries to answer some basic questions.
