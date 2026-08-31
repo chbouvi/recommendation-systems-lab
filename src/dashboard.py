@@ -97,6 +97,25 @@ def get_dashboard_interpretation(outputs_df):
 
     return interpretation
 
+def get_baseline_comparison(outputs_df):
+    popular_df = outputs_df[outputs_df["method"] == "popular"][
+        ["k", "precision", "recall", "hit_rate"]
+    ]
+
+    popular_df.columns = ["k", "precision_popular", "recall_popular", "hit_rate_popular"]
+
+    non_popular_df = outputs_df[outputs_df["method"] != "popular"][
+        ["k", "method", "precision", "recall", "hit_rate"]
+    ]
+
+    comparison_df = pd.merge(popular_df, non_popular_df, on="k")
+
+    comparison_df["precision_delta_vs_popular"] = comparison_df["precision"] - comparison_df["precision_popular"]
+    comparison_df["recall_delta_vs_popular"] = comparison_df["recall"] - comparison_df["recall_popular"]
+    comparison_df["hit_rate_delta_vs_popular"] = comparison_df["hit_rate"] - comparison_df["hit_rate_popular"]
+
+    return comparison_df[["k", "method", "precision_delta_vs_popular", "recall_delta_vs_popular", "hit_rate_delta_vs_popular"]]
+
 st.title("Recommendation Systems Lab")
 
 st.sidebar.header("Choose Metric")
@@ -137,6 +156,12 @@ st.divider()
 
 st.subheader("Best Method by Metric")
 st.dataframe(get_metric_winners(outputs_df), hide_index=True)
+
+st.divider()
+
+st.subheader("Performance vs Popular Baseline")
+st.dataframe(get_baseline_comparison(outputs_df), hide_index=True)
+st.caption("Positive metrics mean the method outperformed the popular baseline")
 
 st.divider()
 

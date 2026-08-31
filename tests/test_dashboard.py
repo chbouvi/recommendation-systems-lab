@@ -1,5 +1,5 @@
 import pandas as pd
-from dashboard import get_valid_seed_movie_titles, get_method_display_name, get_metric_winners, get_dashboard_interpretation
+from dashboard import get_valid_seed_movie_titles, get_method_display_name, get_metric_winners, get_dashboard_interpretation, get_baseline_comparison
 
 fake_df_movies = pd.DataFrame({
     "movieId": [1, 2, 3],
@@ -120,3 +120,33 @@ def test_get_dashboard_interpretation():
     assert "Collaborative filtering beats the popular baseline" in interpretation[1]
 
     assert "Content-based filtering trails the popular baseline" in interpretation[2]
+
+def test_get_baseline_comparison():
+    sample_data = {
+        "method": ["content", "collaborative", "popular", "content", "collaborative", "popular", "content", "collaborative", "popular"],
+        "k": [5, 5, 5, 10, 10, 10, 20, 20, 20],
+        "precision": [0.005, 0.1, 0.04, 0.06, 0.3, 0.08, 0.1, 0.2, 0.05],
+        "recall": [0.005, 0.04, 0.1, 0.006, 0.01, 0.03, 0.2, 0.03, 0.09],
+        "hit_rate": [0.04, 0.08, 0.006, 0.1, 0.04, 0.5, 0.1, 0.24, 0.15],
+        "num_users": [100, 100, 100, 100, 100, 100, 100, 100, 100],
+        "trials_per_user": [50, 50, 50, 50, 50, 50, 50, 50, 50]
+    }
+
+    sample_df = pd.DataFrame(sample_data)
+
+    comparison_df = get_baseline_comparison(sample_df)
+
+    collaborative_delta = comparison_df[(comparison_df["k"] == 5) & (comparison_df["method"] == "collaborative")][
+        "precision_delta_vs_popular"
+    ].values
+    content_delta = comparison_df[(comparison_df["k"] == 10) & (comparison_df["method"] == "content")][
+        "recall_delta_vs_popular"
+    ].values
+
+    assert len(comparison_df) == 6
+
+    assert collaborative_delta[0] == 0.1 - 0.04
+
+    assert content_delta[0] == 0.006 - 0.03
+
+    assert "popular" not in comparison_df["method"].values
