@@ -107,12 +107,7 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
         if not training_ids:
             continue
 
-        training_ratings_df = df_ratings[
-            ~(
-                (df_ratings["userId"] == user_id) &
-                (df_ratings["movieId"].isin(hidden_ids))
-            )
-        ]
+        training_ratings_df = remove_hidden_ratings(df_ratings, user_id, hidden_ids)
         
         seed_movie = rng.choice(training_ids)
         seed_title = get_movie_title(seed_movie)
@@ -148,6 +143,14 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
         }
     
     return average_scores, completed_trials
+
+def remove_hidden_ratings(ratings_df, user_id, hidden_ids):
+    return ratings_df[
+        ~(
+            (ratings_df["userId"] == user_id) &
+            (ratings_df["movieId"].isin(hidden_ids))
+        )
+    ]
 
 def run_evaluation_for_users(user_ids, method, k_values, num_trials, rng):
     results = {k : {} for k in k_values}
