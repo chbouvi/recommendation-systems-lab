@@ -114,6 +114,8 @@ def get_baseline_comparison(outputs_df):
     comparison_df["recall_delta_vs_popular"] = comparison_df["recall"] - comparison_df["recall_popular"]
     comparison_df["hit_rate_delta_vs_popular"] = comparison_df["hit_rate"] - comparison_df["hit_rate_popular"]
 
+    comparison_df["method"] = comparison_df["method"].map(get_method_display_name)
+
     return comparison_df[["k", "method", "precision_delta_vs_popular", "recall_delta_vs_popular", "hit_rate_delta_vs_popular"]]
 
 st.title("Recommendation Systems Lab")

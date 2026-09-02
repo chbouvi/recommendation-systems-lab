@@ -136,10 +136,10 @@ def test_get_baseline_comparison():
 
     comparison_df = get_baseline_comparison(sample_df)
 
-    collaborative_delta = comparison_df[(comparison_df["k"] == 5) & (comparison_df["method"] == "collaborative")][
+    collaborative_delta = comparison_df[(comparison_df["k"] == 5) & (comparison_df["method"] == get_method_display_name("collaborative"))][
         "precision_delta_vs_popular"
     ].values
-    content_delta = comparison_df[(comparison_df["k"] == 10) & (comparison_df["method"] == "content")][
+    content_delta = comparison_df[(comparison_df["k"] == 10) & (comparison_df["method"] == get_method_display_name("content"))][
         "recall_delta_vs_popular"
     ].values
 
