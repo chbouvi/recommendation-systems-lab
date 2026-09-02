@@ -161,7 +161,7 @@ st.divider()
 
 st.subheader("Performance vs Popular Baseline")
 st.dataframe(get_baseline_comparison(outputs_df), hide_index=True)
-st.caption("Positive metrics mean the method outperformed the popular baseline")
+st.caption("Positive values mean the method outperformed the popular baseline for that metric")
 
 st.divider()
 
