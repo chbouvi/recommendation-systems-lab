@@ -185,10 +185,10 @@ best_hit_rate = highest_hit_rate[20]
 col1, col2 = st.columns(2)
 
 with col1:
-    st.metric("Users evaluated", outputs_df["num_users"][0])
+    st.metric("Users evaluated", outputs_df["num_users"].iloc[0])
 
 with col2:
-    st.metric("Trials per user", outputs_df["trials_per_user"][0])
+    st.metric("Trials per user", outputs_df["trials_per_user"].iloc[0])
 
 col3, col4 = st.columns(2)
 
