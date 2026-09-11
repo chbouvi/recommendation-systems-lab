@@ -233,8 +233,8 @@ seed_title = st.selectbox(
 st.caption(f"Seed movie: {seed_title}")
 
 content_recommendations = recommend_similar_movies(seed_title)
-content_recommendations = content_recommendations[["title"]]
-content_recommendations.columns = ["Movie Title"]
+content_recommendations = content_recommendations[["title", "shared_genres"]]
+content_recommendations.columns = ["Movie Title", "Shared Genres"]
 
 top_movies_collaborative, _ = recommend_from_similar_users(seed_title)
 top_movies_collaborative = top_movies_collaborative[["title"]]
@@ -244,11 +244,11 @@ top_popular_movies = recommend_popular_movies(seed_title)
 top_popular_movies = top_popular_movies[["title"]]
 top_popular_movies.columns = ["Movie Title"]
 
-col1, col2, col3 = st.columns(3)
+st.caption("Content-based")
+st.dataframe(content_recommendations, hide_index=True)
 
-with col1:
-    st.caption("Content-based")
-    st.dataframe(content_recommendations, hide_index=True)
+col2, col3 = st.columns(2)
+
 with col2:
     st.caption("Collaborative filtering")
     if top_movies_collaborative.empty:
