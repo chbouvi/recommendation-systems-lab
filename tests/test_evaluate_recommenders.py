@@ -41,12 +41,13 @@ def test_run_evaluation_for_k_values():
     num_trials = 5
     method = "content"
 
-    average_scores, completed_trials = run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng)
+    average_scores, trial_results, completed_trials = run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng)
 
     assert completed_trials > 0
     assert 5 in average_scores
     assert 10 in average_scores
     assert 20 in average_scores
+    assert len(trial_results) == completed_trials * len(k_values)
     
     for k in k_values:
         assert "precision" in average_scores[k]
@@ -63,7 +64,7 @@ def test_run_evaluation_for_users():
     num_trials = 5
     method = "content"
 
-    average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials, rng)
+    average_scores_by_k, _ = run_evaluation_for_users(user_ids, method, k_values, num_trials, rng)
 
     assert 5 in average_scores_by_k 
     assert 10 in average_scores_by_k
@@ -122,9 +123,9 @@ def test_build_results_table_expected_columns():
     k_values = [5, 10]
     num_trials = 5
 
-    results_df = build_results_table(methods, user_ids, k_values, num_trials, seed=42)
+    results_df, trial_results_df = build_results_table(methods, user_ids, k_values, num_trials, seed=42)
 
-    expected_set = {
+    expected_set_results = {
         "method",
         "k",
         "precision",
@@ -134,11 +135,34 @@ def test_build_results_table_expected_columns():
         "trials_per_user"
     }
 
-    results_set = set(results_df.columns)
+    expected_set_trial_results = {
+        "trial_id",
+        "method",
+        "user_id",
+        "seed_movie",
+        "hidden_ids",
+        "k_value",
+        "hit_rate",
+    }
 
-    assert expected_set.issubset(results_set)
+    results_set = set(results_df.columns)
+    trial_results_set = set(trial_results_df.columns)
+
+    assert expected_set_results.issubset(results_set)
     assert not results_df.empty
     assert len(results_df) == len(methods) * len(k_values)
+    assert expected_set_trial_results.issubset(trial_results_set)
+    assert set(trial_results_df["method"]) == set(methods)
+    assert set(trial_results_df["user_id"]) == set(user_ids)
+
+    grouped_trials = trial_results_df.groupby(
+        ["user_id", "trial_id", "k_value"]
+    )
+
+    for _, trial_group in grouped_trials:
+        assert set(trial_group["method"]) == set(methods)
+        assert trial_group["seed_movie"].nunique() == 1
+        assert trial_group["hidden_ids"].map(tuple).nunique() == 1
 
 def test_remove_hidden_ratings():
     ratings_df = pd.DataFrame({
