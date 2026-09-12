@@ -237,8 +237,8 @@ content_recommendations = content_recommendations[["title", "shared_genres"]]
 content_recommendations.columns = ["Movie Title", "Shared Genres"]
 
 top_movies_collaborative, _ = recommend_from_similar_users(seed_title)
-top_movies_collaborative = top_movies_collaborative[["title"]]
-top_movies_collaborative.columns = ["Movie Title"]
+top_movies_collaborative = top_movies_collaborative[["title", "similar_user_likes", "average_similar_user_rating"]]
+top_movies_collaborative.columns = ["Movie Title", "Similar User Likes", "Average Similar User Rating"]
 
 top_popular_movies = recommend_popular_movies(seed_title)
 top_popular_movies = top_popular_movies[["title"]]
@@ -247,14 +247,11 @@ top_popular_movies.columns = ["Movie Title"]
 st.caption("Content-based")
 st.dataframe(content_recommendations, hide_index=True)
 
-col2, col3 = st.columns(2)
+st.caption("Collaborative filtering")
+if top_movies_collaborative.empty:
+    st.info("Not enough similar-user data for this movie. Try a more popular seed movie.")
+else:
+    st.dataframe(top_movies_collaborative, hide_index=True)
 
-with col2:
-    st.caption("Collaborative filtering")
-    if top_movies_collaborative.empty:
-        st.info("Not enough similar-user data for this movie. Try a more popular seed movie.")
-    else:
-        st.dataframe(top_movies_collaborative, hide_index=True)
-with col3:
-    st.caption("Popular baseline")
-    st.dataframe(top_popular_movies, hide_index=True)
+st.caption("Popular baseline")
+st.dataframe(top_popular_movies, hide_index=True)
