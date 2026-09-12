@@ -90,6 +90,7 @@ def run_evaluation(user_id, method, k, num_trials, rng):
 
 def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
     scores = {}
+    trial_results = []
 
     for k in k_values:
         scores[k] = {
@@ -100,7 +101,7 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
 
     completed_trials = 0
 
-    for _ in range(num_trials):
+    for i in range(num_trials):
         relevant_ids = get_relevant_movies_for_user(user_id)
         training_ids, hidden_ids = split_relevant_movies(relevant_ids, rng)
 
@@ -119,6 +120,18 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
             recall = recall_at_k(recommended_ids, hidden_ids, k)
             hit_rate = hit_rate_at_k(recommended_ids, hidden_ids, k)
 
+            trial_results.append(
+                {
+                    "trial_id": i,
+                    "method": method,
+                    "user_id": user_id,
+                    "seed_movie": seed_movie,
+                    "hidden_ids": hidden_ids,
+                    "k_value": k,
+                    "hit_rate": hit_rate
+                }
+            )
+
             scores[k]["precision"].append(precision)
             scores[k]["recall"].append(recall)
             scores[k]["hit_rate"].append(hit_rate)
@@ -127,7 +140,7 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
         completed_trials += 1
 
     if completed_trials == 0:
-        return {}, 0
+        return {}, [], 0
     
     average_scores = {}
 
@@ -142,7 +155,7 @@ def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
             "hit_rate": average_hit_rate
         }
     
-    return average_scores, completed_trials
+    return average_scores, trial_results, completed_trials
 
 def remove_hidden_ratings(ratings_df, user_id, hidden_ids):
     return ratings_df[
@@ -154,9 +167,12 @@ def remove_hidden_ratings(ratings_df, user_id, hidden_ids):
 
 def run_evaluation_for_users(user_ids, method, k_values, num_trials, rng):
     results = {k : {} for k in k_values}
+    all_trial_results = []
 
     for user in user_ids:
-        average_scores, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials, rng)
+        average_scores, user_trial_results, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials, rng)
+
+        all_trial_results.extend(user_trial_results)
 
         if completed_trials == 0:
             continue
@@ -190,7 +206,7 @@ def run_evaluation_for_users(user_ids, method, k_values, num_trials, rng):
             "hit_rate": average_hit_rate
         }
     
-    return average_scores_by_k
+    return average_scores_by_k, all_trial_results
 
 def average_metric_scores(scores):
     if not scores:
@@ -200,11 +216,14 @@ def average_metric_scores(scores):
 
 def build_results_table(methods, user_ids, k_values, num_trials, seed):
     results_table = []
+    all_trial_results = []
 
     for method in methods:
         # Use a separate seed since trial choices should be reproducible but independent from the user sampling
         method_rng = random.Random(seed + 1)
-        average_scores_by_k = run_evaluation_for_users(user_ids, method, k_values, num_trials, method_rng)
+        average_scores_by_k, method_trial_results = run_evaluation_for_users(user_ids, method, k_values, num_trials, method_rng)
+
+        all_trial_results.extend(method_trial_results)
 
         for k in average_scores_by_k:
             results_table.append({
@@ -219,7 +238,9 @@ def build_results_table(methods, user_ids, k_values, num_trials, seed):
     results_df = results_df.round(4)
     results_df[["num_users", "trials_per_user"]] = [len(user_ids), num_trials]
 
-    return results_df
+    trial_results_df = pd.DataFrame(all_trial_results)
+
+    return results_df, trial_results_df
   
 if __name__ == "__main__":
     seed = 42
@@ -235,9 +256,10 @@ if __name__ == "__main__":
     print(f"K values: {k_values}")
     print()
 
-    results_df = build_results_table(methods, user_ids, k_values, num_trials, seed)
+    results_df, trial_results_df = build_results_table(methods, user_ids, k_values, num_trials, seed)
 
     results_df.to_csv("outputs/evaluation_summary.csv", index=False)
+    trial_results_df.to_csv("outputs/evaluation_trials.csv", index=False)
 
     print("Saved results to outputs folder")
     
