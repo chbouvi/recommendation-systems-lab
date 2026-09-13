@@ -54,6 +54,8 @@ The evaluation can run the content-based, collaborative, or popular baseline rec
 
 The evaluation script also saves a summary CSV with each recommender method, K value, precision, recall, hit rate, number of users, and trials per user.
 
+The evaluation script now also stores trial-level rows with the trial id, method, user id, seed movie, hidden ids, K value, and hit rate. The evaluator uses matched seed movies and hidden targets across all methods for the same user, trial, and K value, and the automated tests verify that consistency across content-based, collaborative, and popular recommenders.
+
 The latest evaluation compares content-based filtering, collaborative filtering, and the popular baseline. Collaborative filtering performed best on hidden-movie recovery, the popular baseline placed second, and content-based filtering placed third. This suggests that collaborative filtering is learning useful user-behavior patterns beyond simple movie popularity, while content-based filtering remains helpful for recommendations similar to the seed movie.
 
 After updating the evaluation to remove each target user's hidden rating before generating recommendations, collaborative filtering still achieved the best Hit Rate@20 and outperformed the popularity baseline. This suggests the collaborative method captures useful user-behavior patterns beyond simply recommending globally popular movies.
@@ -80,7 +82,7 @@ Run the test suite with:
 pytest tests/
 ```
 
-Current tests check that recommenders handle valid and invalid inputs, return expected outputs, respect parameters like `top_n` and `min_rating`, compute evaluation metrics correctly, hold out hidden movies during evaluation, run evaluation across multiple K values and users, and support method selection between content-based, collaborative, and popular baseline recommendations.
+Current tests check that recommenders handle valid and invalid inputs, return expected outputs, respect parameters like `top_n` and `min_rating`, compute evaluation metrics correctly, hold out hidden movies during evaluation, run evaluation across multiple K values and users, include trial-level results, and support method selection between content-based, collaborative, and popular baseline recommendations.
 
 ## Dashboard
 
