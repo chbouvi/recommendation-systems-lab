@@ -118,7 +118,7 @@ def test_get_recommendation_ids_invalid_method():
     assert not recommended_ids
 
 def test_build_results_table_expected_columns():
-    methods = ["content"]
+    methods = ["content", "collaborative", "popular"]
     user_ids = [1, 2]
     k_values = [5, 10]
     num_trials = 5
