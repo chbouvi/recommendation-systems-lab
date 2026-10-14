@@ -223,3 +223,9 @@ The dashboard also includes a best method by metric summary table that finds the
 - Improve collaborative filtering beyond the dashboard by adding stronger ranking logic.
 - Improve the Streamlit dashboard with more charts and examples.
 - Expand tests for evaluation metrics and dashboard logic.
+
+## Next Session Checkpoint (October 14, 2026)
+
+The current experiment is **single-seed hidden-movie retrieval**: use one liked movie as the seed and check whether a method finds another liked movie whose rating was hidden from the recommender's input. The hidden movie remains a candidate. Do not add a filter for every other movie the user has rated unless the project changes to a separate "recommend unseen movies to a user" task.
+
+Start by rereading `src/collaborative_filtering.py` and the main evaluation path in `src/evaluate_recommenders.py`. Then sketch an item-to-item collaborative recommender: what data it needs, how it would rank movies related to one seed, and what it should do when the seed has too few ratings. Review that sketch with Codex before implementing it in small steps. Later, compare it with the existing methods using the same matched trials.
