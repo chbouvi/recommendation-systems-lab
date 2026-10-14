@@ -55,39 +55,6 @@ def get_movie_title(movie_id):
 
     return movie_title
 
-def run_evaluation(user_id, method, k, num_trials, rng):
-    precision_scores = []
-    recall_scores = []
-    hit_rate_scores = []
-    completed_trials = 0
-
-    for _ in range(num_trials):
-        relevant_ids = get_relevant_movies_for_user(user_id)
-        training_ids, hidden_ids = split_relevant_movies(relevant_ids, rng)
-
-        if not training_ids:
-            continue
-
-        seed_movie = rng.choice(training_ids)
-        seed_title = get_movie_title(seed_movie)
-
-        recommended_ids = get_recommendation_ids(seed_title, method, k)
-
-        precision_scores.append(precision_at_k(recommended_ids, hidden_ids, k))
-        recall_scores.append(recall_at_k(recommended_ids, hidden_ids, k))
-        hit_rate_scores.append(hit_rate_at_k(recommended_ids, hidden_ids, k))
-        completed_trials += 1
-    
-    if completed_trials == 0:
-        return 0, 0, 0, 0
-    
-    average_precision_score = sum(precision_scores) / completed_trials
-    average_recall_score = sum(recall_scores) / completed_trials
-    average_hit_rate_score = sum(hit_rate_scores) / completed_trials
-
-    return average_precision_score, average_recall_score, average_hit_rate_score, completed_trials
-
-
 def run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng):
     scores = {}
     trial_results = []
