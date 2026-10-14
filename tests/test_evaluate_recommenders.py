@@ -1,6 +1,7 @@
 import random
 import pandas as pd
 from evaluate_recommenders import get_relevant_movies_for_user, get_recommendation_ids, split_relevant_movies, run_evaluation_for_k_values, remove_hidden_ratings, run_evaluation_for_users, build_results_table
+import evaluate_recommenders as evaluator
 
 def test_get_relevant_movies_for_user_valid():
     user_id = 1
@@ -189,3 +190,47 @@ def test_remove_hidden_ratings():
         (training_ratings_df["userId"] == 2) &
         (training_ratings_df["movieId"] == 20)
     ).any()
+
+def test_evaluation_passes_filtered_ratings_to_recommender(monkeypatch):
+    ratings_df = pd.DataFrame({
+        "userId": [1, 1, 2, 2],
+        "movieId": [10, 20, 10, 20],
+        "rating": [5.0, 5.0, 3.0, 3.0],
+    })
+
+    movies_df = pd.DataFrame({
+        "movieId": [10, 20],
+        "title": ["Movie 1", "Movie 2"],
+        "genres": ["Adventure|Thriller|Family", "Horror|Crime|Thriller"],
+    })
+
+    user_id = 1
+    method = "popular"
+    k_values = [1, 2]
+    num_trials = 1
+    seed = 42
+    rng = random.Random(seed)
+    captured = {}
+
+    def fake_get_recommendation_ids(seed_title, method, k, ratings_df=None):
+        captured["ratings_df"] = ratings_df
+        return []
+
+    monkeypatch.setattr(evaluator, "get_recommendation_ids", fake_get_recommendation_ids)
+    monkeypatch.setattr(evaluator, "df_ratings", ratings_df)
+    monkeypatch.setattr(evaluator, "df_movies", movies_df)
+
+    _, trial_results, _ = run_evaluation_for_k_values(user_id, method, k_values, num_trials, rng)
+
+    hidden_id = trial_results[0]["hidden_ids"][0]
+    seed_movie = trial_results[0]["seed_movie"]
+
+    with_user = captured["ratings_df"][captured["ratings_df"]["userId"] == user_id]["movieId"]
+    with_2 = captured["ratings_df"][captured["ratings_df"]["userId"] == 2]["movieId"]
+
+    assert(seed_movie in with_user.values)
+    assert(hidden_id not in with_user.values)
+    assert(hidden_id in with_2.values)
+
+
+
