@@ -36,15 +36,17 @@ def score_candidates_from_seed(matrix, seed_id):
     scores = {}
 
     for movie_id, row in matrix.iterrows():
-        if (movie_id == seed_id):
+        if movie_id == seed_id:
             continue
 
         if not row.to_numpy().any():
             continue
 
-        score = (row.dot(seed_row)) / (sqrt((row ** 2).sum()) * seed_row_length)
+        dot = row.dot(seed_row)
 
-        scores[movie_id] = score
+        if dot > 0:
+            score = dot / (sqrt((row ** 2).sum()) * seed_row_length)
+            scores[movie_id] = score
 
     return scores
 

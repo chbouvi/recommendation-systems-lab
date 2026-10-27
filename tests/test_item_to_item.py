@@ -19,9 +19,9 @@ def test_build_like_matrix():
 
 def test_score_candidates_from_seed():
     ratings_df = pd.DataFrame({
-        "userId": [1, 1, 2, 2, 3, 3],
-        "movieId": [10, 20, 10, 30, 20, 30],
-        "rating": [5.0, 2.0, 4.0, 4.5, 2.0, 3.0],
+        "userId": [1, 1, 2, 2, 3, 3, 3],
+        "movieId": [10, 20, 10, 30, 20, 30, 40],
+        "rating": [5.0, 2.0, 4.0, 4.5, 2.0, 3.0, 4.0],
     })
 
     matrix = build_like_matrix(ratings_df)
@@ -32,3 +32,32 @@ def test_score_candidates_from_seed():
     assert scores[30] == approx(1 / sqrt(2))
     assert 20 not in scores
     assert 10 not in scores
+    assert 40 not in scores
+
+def test_seed_id_not_in_matrix():
+    ratings_df = pd.DataFrame({
+        "userId": [1, 1, 2, 2, 3, 3, 3],
+        "movieId": [10, 20, 10, 30, 20, 30, 40],
+        "rating": [5.0, 2.0, 4.0, 4.5, 2.0, 3.0, 4.0],
+    })
+
+    matrix = build_like_matrix(ratings_df)
+    seed_id = 50
+
+    scores = score_candidates_from_seed(matrix, seed_id)
+
+    assert scores == {}
+
+def test_seed_movie_no_likes():
+    ratings_df = pd.DataFrame({
+        "userId": [1, 1, 2, 2, 3, 3, 3],
+        "movieId": [10, 20, 10, 30, 20, 30, 40],
+        "rating": [5.0, 2.0, 4.0, 4.5, 2.0, 3.0, 4.0],
+    })
+
+    matrix = build_like_matrix(ratings_df)
+    seed_id = 20
+
+    scores = score_candidates_from_seed(matrix, seed_id)
+
+    assert scores == {}
