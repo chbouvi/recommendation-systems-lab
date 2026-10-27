@@ -5,6 +5,11 @@ from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
 
+st.set_page_config(
+    page_title="Recommendation Systems Lab",
+    layout="wide",
+)
+
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -119,139 +124,112 @@ def get_baseline_comparison(outputs_df):
     return comparison_df[["k", "method", "precision_delta_vs_popular", "recall_delta_vs_popular", "hit_rate_delta_vs_popular"]]
 
 st.title("Recommendation Systems Lab")
+st.write("Comparing content-based, collaborative, and popularity recommendations on MovieLens.")
 
-st.sidebar.header("Choose Metric")
+k_values = sorted(outputs_df["k"].unique())
+metric_columns = {"Hit Rate": "hit_rate", "Precision": "precision", "Recall": "recall"}
+num_users = int(outputs_df["num_users"].iloc[0])
+trials_per_user = int(outputs_df["trials_per_user"].iloc[0])
 
-metrics_list = [
-    "Precision",
-    "Recall",
-    "Hit Rate"
-]
-
-default = "hit_rate"
-
-select_metric = st.sidebar.selectbox(
-    "Metric ",
-    metrics_list
+st.subheader("Evaluation")
+st.caption(
+    "Each trial hides a rating for a movie the user liked, then uses another liked movie as the seed."
 )
+control_cols = st.columns(2)
+with control_cols[0]:
+    selected_metric = st.selectbox("Metric", list(metric_columns))
+with control_cols[1]:
+    focus_k = st.selectbox("Top K", k_values, index=len(k_values) - 1)
 
-select_metric = select_metric.strip()
+metric = metric_columns[selected_metric]
+chart_df = outputs_df.assign(method_name=outputs_df["method"].map(get_method_display_name))
+focus_results = chart_df[chart_df["k"] == focus_k].copy()
+focus_results = focus_results.sort_values(metric, ascending=False)
+method_colors = {
+    "Content-based filtering": "#2e5e9e",
+    "Collaborative filtering": "#127c68",
+    "Popular baseline": "#ae6135",
+}
 
-if select_metric == "Precision":
-    final_metric = "precision"
+chart_col, results_col = st.columns([2, 1], gap="large")
+with chart_col:
+    fig = px.line(
+        chart_df,
+        x="k",
+        y=metric,
+        color="method_name",
+        markers=True,
+        color_discrete_map=method_colors,
+        labels={"k": "K", metric: selected_metric, "method_name": "Method"},
+    )
+    fig.update_traces(hovertemplate="K=%{x}<br>Score=%{y:.1%}<extra>%{fullData.name}</extra>")
+    fig.update_layout(
+        height=370,
+        margin=dict(l=0, r=0, t=20, b=0),
+        xaxis=dict(tickmode="array", tickvals=k_values),
+        yaxis=dict(tickformat=".1%", rangemode="tozero"),
+        legend=dict(orientation="h", title_text="", y=1.16),
+    )
+    st.plotly_chart(fig, width="stretch")
 
-elif select_metric == "Recall":
-    final_metric = "recall"
-
-elif select_metric == "Hit Rate":
-    final_metric = "hit_rate"
-
-else:
-    final_metric = default
-
-st.subheader("Evaluation Results")
-st.dataframe(outputs_df, hide_index=True)
-st.caption("Results are averaged across 100 users and 50 trials per user.")
-st.caption("Methods: content = content-based filtering, collaborative = collaborative filtering, popular = popular baseline.")
-
-st.divider()
-
-st.subheader("Best Method by Metric")
-st.dataframe(get_metric_winners(outputs_df), hide_index=True)
-
-st.divider()
-
-st.subheader("Performance vs Popular Baseline")
-st.dataframe(get_baseline_comparison(outputs_df), hide_index=True)
-st.caption("Positive values mean the method outperformed the popular baseline for that metric")
-
-st.divider()
-
-st.subheader("Evaluation Interpretation")
-
-for sentence in get_dashboard_interpretation(outputs_df):
-    st.markdown(f"- {sentence}")
-
-st.divider()
-
-highest_metric_by_method = outputs_df.groupby("method")[final_metric].max()
-best_method = highest_metric_by_method.idxmax()
-
-best_method = get_method_display_name(best_method)
-
-highest_hit_rate = outputs_df.groupby("k")["hit_rate"].max()
-best_hit_rate = highest_hit_rate[20]
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.metric("Users evaluated", outputs_df["num_users"].iloc[0])
-
-with col2:
-    st.metric("Trials per user", outputs_df["trials_per_user"].iloc[0])
-
-col3, col4 = st.columns(2)
-
-with col3:
-    st.metric(f"Best method for {select_metric}", best_method)
-
-with col4:
-    st.metric("Best Hit Rate@20", best_hit_rate)
+with results_col:
+    st.markdown(f"**{selected_metric}@{focus_k}**")
+    focus_table = focus_results[["method_name", metric]].rename(
+        columns={"method_name": "Method", metric: selected_metric}
+    )
+    focus_table[selected_metric] = focus_table[selected_metric].map(lambda value: f"{value:.1%}")
+    st.dataframe(focus_table, hide_index=True, width="stretch")
+    st.caption(f"{num_users} users, {trials_per_user} trials per user.")
 
 st.divider()
-
-outputs_df["k_label"] = outputs_df["k"].astype(str)
-
-fig1 = px.bar(
-    outputs_df,
-    x="k_label",
-    y=final_metric,
-    color="method",
-    title=f"{select_metric} per K",
-    barmode="group"
-)
-
-fig1.update_layout(
-    xaxis_title="K Value",
-    yaxis_title=select_metric,
-    xaxis_type="category"
-)
-
-st.subheader("Metric Comparison")
-st.plotly_chart(fig1, width="stretch")
-st.caption(f"{best_method} performs best for {select_metric}@K in this evaluation. Compare it with the popular baseline to see whether other methods add value beyond popularity.")
-
-st.divider()
-
-st.subheader("Example Recommendations")
-
+st.subheader("Example recommendations")
 seed_title = st.selectbox(
-    "Choose seed movie...", 
-    get_valid_seed_movie_titles(df_movies, df_ratings), 
+    "Seed movie",
+    get_valid_seed_movie_titles(df_movies, df_ratings),
 )
-
-st.caption(f"Seed movie: {seed_title}")
 
 content_recommendations = recommend_similar_movies(seed_title)
 content_recommendations = content_recommendations[["title", "shared_genres"]]
 content_recommendations.columns = ["Movie Title", "Shared Genres"]
 
 top_movies_collaborative, _ = recommend_from_similar_users(seed_title)
-top_movies_collaborative = top_movies_collaborative[["title", "similar_user_likes", "average_similar_user_rating"]]
-top_movies_collaborative.columns = ["Movie Title", "Similar User Likes", "Average Similar User Rating"]
+top_movies_collaborative = top_movies_collaborative[
+    ["title", "similar_user_likes", "average_similar_user_rating"]
+]
+top_movies_collaborative.columns = [
+    "Movie Title", "Similar User Likes", "Average Similar User Rating"
+]
 
 top_popular_movies = recommend_popular_movies(seed_title)
 top_popular_movies = top_popular_movies[["title"]]
 top_popular_movies.columns = ["Movie Title"]
 
-st.caption("Content-based")
-st.dataframe(content_recommendations, hide_index=True)
+content_tab, collaborative_tab, popular_tab = st.tabs(
+    ["Content-based", "Collaborative", "Popular baseline"]
+)
+with content_tab:
+    st.dataframe(content_recommendations, hide_index=True, width="stretch", height=360)
+with collaborative_tab:
+    if top_movies_collaborative.empty:
+        st.info("Not enough similar-user data for this movie. Try another seed.")
+    else:
+        st.dataframe(top_movies_collaborative, hide_index=True, width="stretch", height=360)
+with popular_tab:
+    st.dataframe(top_popular_movies, hide_index=True, width="stretch", height=360)
 
-st.caption("Collaborative filtering")
-if top_movies_collaborative.empty:
-    st.info("Not enough similar-user data for this movie. Try a more popular seed movie.")
-else:
-    st.dataframe(top_movies_collaborative, hide_index=True)
-
-st.caption("Popular baseline")
-st.dataframe(top_popular_movies, hide_index=True)
+st.divider()
+with st.expander("Full evaluation tables"):
+    st.caption(
+        "With one hidden target per trial, Recall@K equals Hit Rate@K and "
+        "Precision@K equals Hit Rate@K / K."
+    )
+    results_tab, baseline_tab, winners_tab = st.tabs(
+        ["Summary", "Compared with popularity", "Best method by metric"]
+    )
+    with results_tab:
+        st.dataframe(outputs_df, hide_index=True, width="stretch")
+    with baseline_tab:
+        st.caption("Positive values mean a method scored above the popularity baseline.")
+        st.dataframe(get_baseline_comparison(outputs_df), hide_index=True, width="stretch")
+    with winners_tab:
+        st.dataframe(get_metric_winners(outputs_df), hide_index=True, width="stretch")
