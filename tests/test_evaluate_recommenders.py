@@ -108,6 +108,16 @@ def test_get_recommendation_ids_popular():
     assert isinstance(recommended_ids, list)
     assert len(recommended_ids) == 5
 
+def test_get_recommendation_ids_item_to_item():
+    seed_title = "Toy Story (1995)"
+    method = "item-to-item"
+    k = 5
+
+    recommended_ids = get_recommendation_ids(seed_title, method, k)
+
+    assert isinstance(recommended_ids, list)
+    assert len(recommended_ids) == 5
+
 
 def test_get_recommendation_ids_invalid_method():
     seed_title = "Toy Story (1995)"
