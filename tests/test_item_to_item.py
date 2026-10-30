@@ -1,5 +1,5 @@
 import pandas as pd
-from item_to_item import build_like_matrix, score_candidates_from_seed
+from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
 from pytest import approx
 from math import sqrt
 
@@ -61,3 +61,11 @@ def test_seed_movie_no_likes():
     scores = score_candidates_from_seed(matrix, seed_id)
 
     assert scores == {}
+
+def test_recommend_top_k():
+    scores = {30: 0.7, 40: 0.2, 50: 0.9}
+    k = 2
+
+    recommendations = recommend_top_k(scores, k)
+
+    assert recommendations == [50, 30]
