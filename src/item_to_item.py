@@ -1,5 +1,4 @@
 import pandas as pd
-from math import sqrt
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
@@ -34,23 +33,21 @@ def score_candidates_from_seed(matrix, seed_id):
     if not seed_row.to_numpy().any():
         return {}
 
-    seed_row_length = sqrt((seed_row ** 2).sum())
-    scores = {}
+    shared_like_counts = matrix.dot(seed_row)
+    row_lengths = matrix.sum(axis=1) ** 0.5
+    seed_length = row_lengths.loc[seed_id]
 
-    for movie_id, row in matrix.iterrows():
-        if movie_id == seed_id:
-            continue
+    cosine_denominators = row_lengths * seed_length
 
-        if not row.to_numpy().any():
-            continue
+    has_overlap = shared_like_counts > 0
+    positive_counts = shared_like_counts[has_overlap]
+    cosine_denominators = cosine_denominators[has_overlap]
 
-        dot = row.dot(seed_row)
+    scores = positive_counts / cosine_denominators
 
-        if dot > 0:
-            score = dot / (sqrt((row ** 2).sum()) * seed_row_length)
-            scores[movie_id] = score
+    scores = scores.drop(seed_id)
 
-    return scores
+    return scores.to_dict()
 
 def recommend_top_k(scores, k):
     sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
