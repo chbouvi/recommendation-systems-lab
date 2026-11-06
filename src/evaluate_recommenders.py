@@ -147,10 +147,14 @@ def run_evaluation_for_users(user_ids, method, k_values, num_trials, rng):
     results = {k : {} for k in k_values}
     all_trial_results = []
 
-    for user in user_ids:
+    for users_processed, user in enumerate(user_ids, start=1):
         average_scores, user_trial_results, completed_trials = run_evaluation_for_k_values(user, method, k_values, num_trials, rng)
 
         all_trial_results.extend(user_trial_results)
+
+        if users_processed % 10 == 0:
+            percentage = users_processed / len(user_ids)
+            print(f"{method}: {percentage:.0%} of users completed")
 
         if completed_trials == 0:
             continue
