@@ -61,7 +61,10 @@ def recommend_top_k(scores, k):
 
     return top_k_movies
 
-def recommend_item_to_item(movie_id, top_n=10, ratings_df=None, movies_df=None):
+def recommend_item_to_item(movie_id, top_n=10, ratings_df=None):
+    if ratings_df is None:
+        ratings_df = df_ratings
+    
     matrix = build_like_matrix(ratings_df)
 
     scores = score_candidates_from_seed(matrix, movie_id)

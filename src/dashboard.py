@@ -4,6 +4,7 @@ import plotly.express as px
 from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
+from item_to_item import recommend_item_to_item
 
 st.set_page_config(
     page_title="Recommendation Systems Lab",
@@ -35,7 +36,8 @@ def get_method_display_name(method):
     method_names = {
         "content": "Content-based filtering",
         "collaborative": "Collaborative filtering",
-        "popular": "Popular baseline"
+        "popular": "Popular baseline",
+        "item-to-item": "Item-to-item cosine similarity"
     }
 
     return method_names.get(method, method)
@@ -204,8 +206,14 @@ top_popular_movies = recommend_popular_movies(seed_title)
 top_popular_movies = top_popular_movies[["title"]]
 top_popular_movies.columns = ["Movie Title"]
 
-content_tab, collaborative_tab, popular_tab = st.tabs(
-    ["Content-based", "Collaborative", "Popular baseline"]
+seed_id = df_movies[df_movies["title"] == seed_title]["movieId"].iloc[0]
+top_item_to_item_ids = recommend_item_to_item(seed_id)
+movies_by_id = df_movies.set_index("movieId")
+top_item_to_item_movies = movies_by_id.loc[top_item_to_item_ids][["title"]]
+top_item_to_item_movies.columns = ["Movie Title"]
+
+content_tab, collaborative_tab, popular_tab, item_to_item_tab = st.tabs(
+    ["Content-based", "Collaborative", "Popular baseline", "Item-to-item"]
 )
 with content_tab:
     st.dataframe(content_recommendations, hide_index=True, width="stretch", height=360)
@@ -216,6 +224,8 @@ with collaborative_tab:
         st.dataframe(top_movies_collaborative, hide_index=True, width="stretch", height=360)
 with popular_tab:
     st.dataframe(top_popular_movies, hide_index=True, width="stretch", height=360)
+with item_to_item_tab:
+    st.dataframe(top_item_to_item_movies, hide_index=True, width="stretch", height=360)
 
 st.divider()
 with st.expander("Full evaluation tables"):
