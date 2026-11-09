@@ -229,3 +229,7 @@ The dashboard also includes a best method by metric summary table that finds the
 The current experiment is **single-seed hidden-movie retrieval**: use one liked movie as the seed and check whether a method finds another liked movie whose rating was hidden from the recommender's input. The hidden movie remains a candidate. Do not add a filter for every other movie the user has rated unless the project changes to a separate "recommend unseen movies to a user" task.
 
 Start by rereading `src/collaborative_filtering.py` and the main evaluation path in `src/evaluate_recommenders.py`. Then sketch an item-to-item collaborative recommender: what data it needs, how it would rank movies related to one seed, and what it should do when the seed has too few ratings. Review that sketch with Codex before implementing it in small steps. Later, compare it with the existing methods using the same matched trials.
+
+## Example Recommendation Check (November 8, 2026)
+
+For *Sense and Sensibility (1995)*, the item-to-item list felt more relevant to me than the other lists. It included *Emma*, *Little Women*, and *Four Weddings and a Funeral*, while the popularity method mostly returned big hits that did not seem specific to the seed movie. This is just one example, though - item-to-item still scored below popularity on Hit Rate@20 in the current evaluation.
