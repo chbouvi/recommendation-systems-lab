@@ -4,7 +4,7 @@ import plotly.express as px
 from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
-from item_to_item import recommend_item_to_item
+from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
 
 st.set_page_config(
     page_title="Recommendation Systems Lab",
@@ -207,10 +207,13 @@ top_popular_movies = top_popular_movies[["title"]]
 top_popular_movies.columns = ["Movie Title"]
 
 seed_id = df_movies[df_movies["title"] == seed_title]["movieId"].iloc[0]
-top_item_to_item_ids = recommend_item_to_item(seed_id)
+matrix = build_like_matrix(df_ratings)
+scores_by_id = score_candidates_from_seed(matrix, seed_id)
+top_item_to_item_ids = recommend_top_k(scores_by_id, 10)
 movies_by_id = df_movies.set_index("movieId")
 top_item_to_item_movies = movies_by_id.loc[top_item_to_item_ids][["title"]]
-top_item_to_item_movies.columns = ["Movie Title"]
+top_item_to_item_movies["cosineScore"] = top_item_to_item_movies.index.map(scores_by_id)
+top_item_to_item_movies.columns = ["Movie Title", "Cosine Similarity Score"]
 
 content_tab, collaborative_tab, popular_tab, item_to_item_tab = st.tabs(
     ["Content-based", "Collaborative", "Popular baseline", "Item-to-item"]
