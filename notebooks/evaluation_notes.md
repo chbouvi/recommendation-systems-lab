@@ -233,3 +233,12 @@ Start by rereading `src/collaborative_filtering.py` and the main evaluation path
 ## Example Recommendation Check (November 8, 2026)
 
 For *Sense and Sensibility (1995)*, the item-to-item list felt more relevant to me than the other lists. It included *Emma*, *Little Women*, and *Four Weddings and a Funeral*, while the popularity method mostly returned big hits that did not seem specific to the seed movie. This is just one example, though - item-to-item still scored below popularity on Hit Rate@20 in the current evaluation.
+
+## Finding (November 17, 2026)
+
+Out of 5,000 matched trials:
+
+- Popularity hit 527 times (360 alone + 167 shared)
+- Item-to-item hit 440 times (273 alone + 167 shared)
+
+Item-to-item has a lower overall Hit Rate@20 than Popularity, but it found 273 hidden movies that Popularity missed.
