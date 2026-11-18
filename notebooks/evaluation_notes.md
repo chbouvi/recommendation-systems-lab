@@ -242,3 +242,9 @@ Out of 5,000 matched trials:
 - Item-to-item hit 440 times (273 alone + 167 shared)
 
 Item-to-item has a lower overall Hit Rate@20 than Popularity, but it found 273 hidden movies that Popularity missed.
+
+## Next Session: Test a Hybrid Ranking
+
+The two methods found different hidden movies, so I want to test whether combining them helps. A hybrid would give each candidate a cosine score based on its overlap with the seed movie and a popularity score based on its total number of 4+ ratings. Cosine is specific to the seed; popularity is the same regardless of seed.
+
+Start by sketching how to scale and combine the two scores, then check the idea on a small example before coding it. Keep the current methods as comparisons. The hybrid should return one top-20 list and use the same hidden-movie trials, with the hidden rating removed from its input. It might improve Hit Rate@20, but it could also push good seed-specific matches down.
