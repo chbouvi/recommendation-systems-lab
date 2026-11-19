@@ -248,3 +248,11 @@ Item-to-item has a lower overall Hit Rate@20 than Popularity, but it found 273 h
 The two methods found different hidden movies, so I want to test whether combining them helps. A hybrid would give each candidate a cosine score based on its overlap with the seed movie and a popularity score based on its total number of 4+ ratings. Cosine is specific to the seed; popularity is the same regardless of seed.
 
 Start by sketching how to scale and combine the two scores, then check the idea on a small example before coding it. Keep the current methods as comparisons. The hybrid should return one top-20 list and use the same hidden-movie trials, with the hidden rating removed from its input. It might improve Hit Rate@20, but it could also push good seed-specific matches down.
+
+## First experiment:
+
+`hybrid score = 0.8(cosine score) + 0.2(scaled popularity)`
+
+- Scaled popularity: number of 4+ ratings for a movie divided by the largest such count in the training data. In the binary matrix, those counts are the row sums.
+
+- No shared fans: use a cosine score of 0 for that candidate. score_candidates_from_seed() leaves those movies out of its dictionary, but the hybrid should still be able to consider them.
