@@ -1,4 +1,4 @@
-from item_to_item import build_like_matrix
+from item_to_item import build_like_matrix, score_candidates_from_seed
 import pandas as pd
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -17,8 +17,23 @@ def get_scaled_popularity_scores(matrix):
     like_counts = like_counts / largest_count
     return like_counts.to_dict()
 
+def get_hybrid_scores(matrix, seed_id, cosine_weight=0.8):
+    cosine_scores = score_candidates_from_seed(matrix, seed_id)
+    popularity_scores = get_scaled_popularity_scores(matrix)
+
+    hybrid_scores = {}
+
+    for movie_id, popularity_score in popularity_scores.items():
+        if movie_id == seed_id:
+            continue
+        cosine_score = cosine_scores.get(movie_id, 0)
+        hybrid_score = cosine_weight * cosine_score + (1 - cosine_weight) * popularity_score
+        hybrid_scores[movie_id] = hybrid_score
+
+    return hybrid_scores
+
 
 if __name__ == "__main__":
     matrix = build_like_matrix(df_ratings)
-    result = get_scaled_popularity_scores(matrix)
+    result = get_hybrid_scores(matrix, 1)
     print(result)
