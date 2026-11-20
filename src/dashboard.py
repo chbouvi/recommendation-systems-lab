@@ -5,6 +5,7 @@ from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
 from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
+from hybrid import get_hybrid_scores, get_scaled_popularity_scores
 
 st.set_page_config(
     page_title="Recommendation Systems Lab",
@@ -37,7 +38,8 @@ def get_method_display_name(method):
         "content": "Content-based filtering",
         "collaborative": "Collaborative filtering",
         "popular": "Popular baseline",
-        "item-to-item": "Item-to-item cosine similarity"
+        "item-to-item": "Item-to-item cosine similarity",
+        "hybrid": "Hybrid (cosine + popularity)"
     }
 
     return method_names.get(method, method)
@@ -126,7 +128,7 @@ def get_baseline_comparison(outputs_df):
     return comparison_df[["k", "method", "precision_delta_vs_popular", "recall_delta_vs_popular", "hit_rate_delta_vs_popular"]]
 
 st.title("Recommendation Systems Lab")
-st.write("Comparing content-based, collaborative, and popularity recommendations on MovieLens.")
+st.write("Comparing movie recommendation methods on MovieLens.")
 
 k_values = sorted(outputs_df["k"].unique())
 metric_columns = {"Hit Rate": "hit_rate", "Precision": "precision", "Recall": "recall"}
@@ -151,6 +153,8 @@ method_colors = {
     "Content-based filtering": "#2e5e9e",
     "Collaborative filtering": "#127c68",
     "Popular baseline": "#ae6135",
+    "Item-to-item cosine similarity": "#7054a3",
+    "Hybrid (cosine + popularity)": "#ad4279",
 }
 
 chart_col, results_col = st.columns([2, 1], gap="large")
@@ -215,8 +219,24 @@ top_item_to_item_movies = movies_by_id.loc[top_item_to_item_ids][["title"]]
 top_item_to_item_movies["cosineScore"] = top_item_to_item_movies.index.map(scores_by_id)
 top_item_to_item_movies.columns = ["Movie Title", "Cosine Similarity Score"]
 
-content_tab, collaborative_tab, popular_tab, item_to_item_tab = st.tabs(
-    ["Content-based", "Collaborative", "Popular baseline", "Item-to-item"]
+popularity_scores_by_id = get_scaled_popularity_scores(matrix)
+hybrid_scores_by_id = get_hybrid_scores(matrix, seed_id)
+top_hybrid_ids = recommend_top_k(hybrid_scores_by_id, 10)
+top_hybrid_movies = movies_by_id.loc[top_hybrid_ids, ["title"]].rename(
+    columns={"title": "Movie Title"}
+).copy()
+top_hybrid_movies["Cosine Similarity"] = [
+    scores_by_id.get(movie_id, 0.0) for movie_id in top_hybrid_ids
+]
+top_hybrid_movies["Scaled Popularity"] = [
+    popularity_scores_by_id[movie_id] for movie_id in top_hybrid_ids
+]
+top_hybrid_movies["Hybrid Score"] = [
+    hybrid_scores_by_id[movie_id] for movie_id in top_hybrid_ids
+]
+
+content_tab, collaborative_tab, popular_tab, item_to_item_tab, hybrid_tab = st.tabs(
+    ["Content-based", "Collaborative", "Popular baseline", "Item-to-item", "Hybrid"]
 )
 with content_tab:
     st.dataframe(content_recommendations, hide_index=True, width="stretch", height=360)
@@ -229,6 +249,9 @@ with popular_tab:
     st.dataframe(top_popular_movies, hide_index=True, width="stretch", height=360)
 with item_to_item_tab:
     st.dataframe(top_item_to_item_movies, hide_index=True, width="stretch", height=360)
+with hybrid_tab:
+    st.caption("Score = 0.8 × cosine similarity + 0.2 × scaled popularity.")
+    st.dataframe(top_hybrid_movies.round(4), hide_index=True, width="stretch", height=360)
 
 st.divider()
 with st.expander("Full evaluation tables"):
