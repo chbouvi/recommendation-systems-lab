@@ -256,3 +256,17 @@ Start by sketching how to scale and combine the two scores, then check the idea 
 - Scaled popularity: number of 4+ ratings for a movie divided by the largest such count in the training data. In the binary matrix, those counts are the row sums.
 
 - No shared fans: use a cosine score of 0 for that candidate. score_candidates_from_seed() leaves those movies out of its dictionary, but the hybrid should still be able to consider them.
+
+## Next Session: Check Whether Recommendations Are Actually Similar (November 18, 2026)
+
+I want the project to recommend movies that make sense given the seed movie, not just recover another movie a user happened to like. Hit Rate@20 measures the second thing, so I need to check recommendation quality separately.
+
+For *Sense and Sensibility (1995)*, item-to-item returned *Emma* and *Little Women*, which feel like good matches. The new hybrid put *The Shawshank Redemption*, *The Silence of the Lambs*, and *Pulp Fiction* at the top. Its popularity term seems to be pushing broadly liked movies above closer matches. The hybrid's Hit Rate@20 improved over popularity in the latest run, but that does not mean its movies are more similar to the seed.
+
+Next time:
+
+1. Pick around five seed movies with different genres and popularity levels. Save the top 10 from each method for each seed.
+2. For each list, mark which movies I would actually consider similar to the seed, and write a short reason for any surprising results. Decide what "similar" means before changing scores: genre, story, tone, setting, or some combination.
+3. Check whether the pattern from *Sense and Sensibility* repeats. If popularity keeps crowding out close matches, try a smaller popularity weight or use popularity only to break ties. Compare the new lists with the current lists and keep the same Hit Rate@20 evaluation as a separate check.
+
+Do not tune the method around one movie. The goal is to understand where each approach works and where it fails.
