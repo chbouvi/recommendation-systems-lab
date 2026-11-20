@@ -1,4 +1,4 @@
-from item_to_item import build_like_matrix, score_candidates_from_seed
+from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
 import pandas as pd
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -31,6 +31,12 @@ def get_hybrid_scores(matrix, seed_id, cosine_weight=0.8):
         hybrid_scores[movie_id] = hybrid_score
 
     return hybrid_scores
+
+def recommend_hybrid(seed_id, top_n, ratings_df, cosine_weight=0.8):
+    matrix = build_like_matrix(ratings_df)
+    scores = get_hybrid_scores(matrix, seed_id, cosine_weight)
+
+    return recommend_top_k(scores, top_n)
 
 
 if __name__ == "__main__":
