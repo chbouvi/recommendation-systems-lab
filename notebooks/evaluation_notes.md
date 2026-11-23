@@ -374,3 +374,21 @@ What counts as similar:
 - Pride and Prejudice (1995) (2)
 - Clueless (1995) (2)
 - Jesus Camp (2006) (0)
+
+## Cosine + Genre Hybrid (November 23, 2026)
+
+The movie checks above showed that cosine similarity can rank movies with overlapping fans but very different stories. Genre matching helped for *Toy Story*, while item-to-item found some closer matches for *Pride & Prejudice*. I added a method that combines those two signals. The earlier hybrid is now called `cosine-popularity` in the evaluator; this one is `cosine-genre`.
+
+For each candidate with a positive item-to-item cosine score, the new method compares its genres with the seed's. Genre similarity is the number of shared genres divided by the number of distinct genres across both movies. The ranking score is `0.8 * cosine similarity + 0.2 * genre similarity`. Candidates with no shared liking users are left out for now.
+
+I checked the genre calculation on a small example: identical genres score 1, `Drama|Romance` versus `Documentary|Drama` scores 1/3, and no shared genres scores 0. The combined-score test also passes. The dashboard has a separate tab showing the cosine, genre, and final scores.
+
+Early example lists look better for *Toy Story* and *Pride & Prejudice*: *Toy Story 2*, *Monsters, Inc.*, and *Shrek* lead the first list, and the 1995 *Pride and Prejudice* leads the second. *Sense and Sensibility* still gets some broad Drama/Romance matches, so the blend has not solved every case.
+
+### Evaluation result
+
+The run finished with 5,000 matched trials per method. Cosine + genre had a Hit Rate@20 of 7.70% (385 hits), compared with 8.80% (440 hits) for item-to-item, 11.24% (562 hits) for cosine + popularity, and 12.66% (633 hits) for collaborative. Cosine + genre also scored below item-to-item at K=5 and K=10.
+
+At K=20, both cosine + genre and item-to-item found the hidden movie in 292 trials. Item-to-item alone found it in 148 trials, and cosine + genre alone found it in 93. Adding genres changed which movies were recovered, but it did not improve overall hidden-movie recovery in this run.
+
+This result does not tell me whether its recommendations feel more similar to the seed. I still need to score its lists using the same movie examples above before deciding whether the blend helped with that goal.
