@@ -270,3 +270,107 @@ Next time:
 3. Check whether the pattern from *Sense and Sensibility* repeats. If popularity keeps crowding out close matches, try a smaller popularity weight or use popularity only to break ties. Compare the new lists with the current lists and keep the same Hit Rate@20 evaluation as a separate check.
 
 Do not tune the method around one movie. The goal is to understand where each approach works and where it fails.
+
+## Are These Recommendations Even Similar?
+
+Seed: Toy Story (1995)
+
+Scores:
+- 2: a strong match to the seed
+- 1: some connection, but a questionable recommendation
+- 0: unrelated
+
+What counts as similar:
+- Family movies about friendship and adventure
+
+### Content-based:
+
+- Shrek (2001) (2)
+- Monsters, Inc. (2001) (2)
+- Toy Story 2 (1999) (2)
+- Who Framed Roger Rabbit? (1988) (2)
+- Toy Story 3 (2010) (2)
+
+### Collaborative:
+
+- Shawshank Redemption, The (1994) (0)
+- Forrest Gump (1994) (1)
+- Star Wars: Episode IV - A New Hope (1977) (1)
+- Pulp Fiction (1994) (0)
+- Silence of the Lambs, The (1991) (0)
+
+### Popular baseline:
+
+- Shawshank Redemption, The (1994) (0)
+- Forrest Gump (1994) (1)
+- Pulp Fiction (1994) (0)
+- Silence of the Lambs, The (1991) (0)
+- Matrix, The (1999) (0)
+
+### Item-to-item:
+
+- Toy Story 2 (1999) (2)
+- Star Wars: Episode IV - A New Hope (1977) (1)
+- Sixth Sense, The (1999) (0)
+- Lion King, The (1994) (2)
+- Jurassic Park (1993) (2)
+
+### Hybrid:
+
+- Shawshank Redemption, The (1994) (0)
+- Forrest Gump (1994) (1)
+- Star Wars: Episode IV - A New Hope (1977) (1)
+- Pulp Fiction (1994) (0)
+- Silence of the Lambs, The (1991) (0)
+
+## Pride & Prejudice (2005) Recommendation Check
+
+Seed: Pride & Prejudice (2005)
+
+Scores:
+- 2: a strong match to the seed
+- 1: some connection, but a questionable recommendation
+- 0: unrelated
+
+What counts as similar:
+- Period romance, family and marriage pressures, social class.
+
+### Content-based:
+
+- Forrest Gump (1994) (1)
+- American Beauty (1999) (0)
+- Good Will Hunting (1997) (1)
+- Titanic (1997) (2)
+- Eternal Sunshine of the Spotless Mind (2004) (1)
+
+### Collaborative:
+
+- Clueless (1995) (2)
+- Love Actually (2003) (1)
+- Easy A (2010) (1)
+- Dark Knight, The (2008) (0)
+- Inception (2010) (0)
+
+### Popular baseline:
+
+- Shawshank Redemption, The (1994) (0)
+- Forrest Gump (1994) (1)
+- Pulp Fiction (1994) (0)
+- Silence of the Lambs, The (1991) (0)
+- Matrix, The (1999) (0)
+
+### Item-to-item:
+
+- Easy A (2010) (1)
+- Girl Next Door, The (2004) (1)
+- Pride and Prejudice (1995) (2)
+- Jesus Camp (2006) (0)
+- Clueless (1995) (2)
+
+### Hybrid:
+
+- Easy A (2010) (1)
+- Girl Next Door, The (2004) (1)
+- Pride and Prejudice (1995) (2)
+- Clueless (1995) (2)
+- Jesus Camp (2006) (0)
