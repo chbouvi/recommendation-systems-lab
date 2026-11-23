@@ -5,7 +5,7 @@ from collaborative_filtering import recommend_from_similar_users
 from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
 from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
-from hybrid import get_hybrid_scores, get_scaled_popularity_scores
+from cosine_popularity_hybrid import get_cosine_popularity_scores, get_scaled_popularity_scores
 
 st.set_page_config(
     page_title="Recommendation Systems Lab",
@@ -220,7 +220,7 @@ top_item_to_item_movies["cosineScore"] = top_item_to_item_movies.index.map(score
 top_item_to_item_movies.columns = ["Movie Title", "Cosine Similarity Score"]
 
 popularity_scores_by_id = get_scaled_popularity_scores(matrix)
-hybrid_scores_by_id = get_hybrid_scores(matrix, seed_id)
+hybrid_scores_by_id = get_cosine_popularity_scores(matrix, seed_id)
 top_hybrid_ids = recommend_top_k(hybrid_scores_by_id, 10)
 top_hybrid_movies = movies_by_id.loc[top_hybrid_ids, ["title"]].rename(
     columns={"title": "Movie Title"}

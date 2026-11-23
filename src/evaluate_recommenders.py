@@ -4,7 +4,7 @@ from content_based import recommend_similar_movies
 from collaborative_filtering import recommend_from_similar_users
 from popular_baseline import recommend_popular_movies
 from item_to_item import recommend_item_to_item
-from hybrid import recommend_hybrid
+from cosine_popularity_hybrid import recommend_cosine_popularity_hybrid
 from evaluation import precision_at_k, recall_at_k, hit_rate_at_k
 
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
@@ -54,7 +54,7 @@ def get_recommendation_ids(seed_title, method, k, ratings_df=None):
 
         movie_id = movie_row["movieId"].iloc[0]
 
-        recommended_ids = recommend_hybrid(movie_id, top_n=k, ratings_df=ratings_df)
+        recommended_ids = recommend_cosine_popularity_hybrid(movie_id, top_n=k, ratings_df=ratings_df)
     else:
         return []
     
