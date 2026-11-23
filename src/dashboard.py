@@ -6,6 +6,7 @@ from content_based import recommend_similar_movies
 from popular_baseline import recommend_popular_movies
 from item_to_item import build_like_matrix, score_candidates_from_seed, recommend_top_k
 from cosine_popularity_hybrid import get_cosine_popularity_scores, get_scaled_popularity_scores
+from cosine_genre_hybrid import get_cosine_genre_scores, get_genre_similarity_scores
 
 st.set_page_config(
     page_title="Recommendation Systems Lab",
@@ -13,6 +14,7 @@ st.set_page_config(
 )
 
 outputs_df = pd.read_csv("outputs/evaluation_summary.csv")
+outputs_df["method"] = outputs_df["method"].replace({"hybrid": "cosine-popularity"})
 df_movies = pd.read_csv("data/ml-latest-small/movies.csv")
 df_ratings = pd.read_csv("data/ml-latest-small/ratings.csv")
 
@@ -39,7 +41,8 @@ def get_method_display_name(method):
         "collaborative": "Collaborative filtering",
         "popular": "Popular baseline",
         "item-to-item": "Item-to-item cosine similarity",
-        "hybrid": "Hybrid (cosine + popularity)"
+        "cosine-popularity": "Cosine + popularity hybrid",
+        "cosine-genre": "Cosine + genre hybrid"
     }
 
     return method_names.get(method, method)
@@ -154,7 +157,8 @@ method_colors = {
     "Collaborative filtering": "#127c68",
     "Popular baseline": "#ae6135",
     "Item-to-item cosine similarity": "#7054a3",
-    "Hybrid (cosine + popularity)": "#ad4279",
+    "Cosine + popularity hybrid": "#ad4279",
+    "Cosine + genre hybrid": "#8f6b23",
 }
 
 chart_col, results_col = st.columns([2, 1], gap="large")
@@ -235,8 +239,24 @@ top_hybrid_movies["Hybrid Score"] = [
     hybrid_scores_by_id[movie_id] for movie_id in top_hybrid_ids
 ]
 
-content_tab, collaborative_tab, popular_tab, item_to_item_tab, hybrid_tab = st.tabs(
-    ["Content-based", "Collaborative", "Popular baseline", "Item-to-item", "Hybrid"]
+cosine_genre_scores_by_id = get_cosine_genre_scores(matrix, seed_id, movies_df=df_movies)
+top_cosine_genre_ids = recommend_top_k(cosine_genre_scores_by_id, 10)
+genre_scores_by_id = get_genre_similarity_scores(seed_id, top_cosine_genre_ids, df_movies)
+top_cosine_genre_movies = movies_by_id.loc[top_cosine_genre_ids, ["title"]].rename(
+    columns={"title": "Movie Title"}
+).copy()
+top_cosine_genre_movies["Cosine Similarity"] = [
+    scores_by_id[movie_id] for movie_id in top_cosine_genre_ids
+]
+top_cosine_genre_movies["Genre Similarity"] = [
+    genre_scores_by_id[movie_id] for movie_id in top_cosine_genre_ids
+]
+top_cosine_genre_movies["Hybrid Score"] = [
+    cosine_genre_scores_by_id[movie_id] for movie_id in top_cosine_genre_ids
+]
+
+content_tab, collaborative_tab, popular_tab, item_to_item_tab, hybrid_tab, cosine_genre_tab = st.tabs(
+    ["Content-based", "Collaborative", "Popular baseline", "Item-to-item", "Cosine + popularity", "Cosine + genre"]
 )
 with content_tab:
     st.dataframe(content_recommendations, hide_index=True, width="stretch", height=360)
@@ -252,6 +272,9 @@ with item_to_item_tab:
 with hybrid_tab:
     st.caption("Score = 0.8 × cosine similarity + 0.2 × scaled popularity.")
     st.dataframe(top_hybrid_movies.round(4), hide_index=True, width="stretch", height=360)
+with cosine_genre_tab:
+    st.caption("Score = 0.8 × cosine similarity + 0.2 × genre similarity.")
+    st.dataframe(top_cosine_genre_movies.round(4), hide_index=True, width="stretch", height=360)
 
 st.divider()
 with st.expander("Full evaluation tables"):
